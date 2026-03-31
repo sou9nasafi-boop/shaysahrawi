@@ -34,14 +34,15 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
           </a>
         </div>
 
-        {/* Search Bar - Desktop */}
-        <div className="hidden flex-1 items-center justify-center px-12 md:flex">
+        {/* Search Bar */}
+        <div className="flex flex-1 items-center justify-center px-4 md:px-12">
           <div className="relative w-full max-w-lg">
-            <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-oasis/30" />
+            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-oasis/30 md:right-4" />
             <Input
+              id="main-search"
               type="search"
-              placeholder="ابحث عن الأصالة..."
-              className="h-12 w-full rounded-2xl border-oasis/5 bg-white/50 pr-12 text-right text-sm focus-visible:ring-gold transition-all focus:bg-white"
+              placeholder="ابحث..."
+              className="h-10 w-full rounded-xl border-oasis/5 bg-white/50 pr-10 text-right text-xs focus-visible:ring-gold transition-all focus:bg-white md:h-12 md:rounded-2xl md:pr-12 md:text-sm"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />
@@ -49,7 +50,7 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden items-center gap-6 md:flex ml-6">
             <a href="#products-grid" className="text-sm font-bold text-oasis/60 hover:text-oasis transition-colors">المنتجات</a>
             <a href="#" className="text-sm font-bold text-oasis/60 hover:text-oasis transition-colors">قصتنا</a>
@@ -57,10 +58,10 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
           
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-2xl bg-oasis/5 text-oasis hover:bg-oasis hover:text-white transition-all">
-                <ShoppingCart className="h-6 w-6" />
+              <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl bg-oasis/5 text-oasis hover:bg-oasis hover:text-white transition-all md:h-12 md:w-12 md:rounded-2xl">
+                <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
                 {cartCount > 0 && (
-                  <span className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-black text-oasis shadow-lg">
+                  <span className="absolute -left-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[8px] font-black text-oasis shadow-lg md:h-5 md:w-5 md:text-[10px]">
                     {cartCount}
                   </span>
                 )}

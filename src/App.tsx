@@ -79,6 +79,14 @@ export default function App() {
     );
   };
 
+  const handleSearchFocus = () => {
+    const searchInput = document.getElementById('main-search');
+    if (searchInput) {
+      searchInput.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
@@ -123,7 +131,7 @@ export default function App() {
 
         {/* Hero Section */}
         {!selectedCategory && !searchQuery && (
-          <section className="relative mb-32 h-[80vh] w-full overflow-hidden rounded-[3rem] bg-oasis premium-shadow">
+          <section className="relative mb-16 h-[70vh] w-full overflow-hidden rounded-[2rem] bg-oasis premium-shadow md:mb-32 md:h-[80vh] md:rounded-[3rem]">
             <div className="absolute inset-0">
               <img
                 src="https://picsum.photos/seed/desert-tea/1920/1080?blur=2"
@@ -134,27 +142,27 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-b from-oasis/20 via-transparent to-oasis" />
             </div>
             
-            <div className="container relative mx-auto flex h-full flex-col items-center justify-center px-8 text-center">
+            <div className="container relative mx-auto flex h-full flex-col items-center justify-center px-6 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="max-w-3xl"
               >
-                <span className="mb-6 inline-block text-xs font-black uppercase tracking-[0.6em] text-gold-shimmer">
+                <span className="mb-4 inline-block text-[10px] font-black uppercase tracking-[0.4em] text-gold-shimmer md:mb-6 md:text-xs md:tracking-[0.6em]">
                   تراث الأصالة المغربية
                 </span>
-                <h1 className="mb-8 text-5xl font-black leading-[1.1] text-white md:text-8xl">
+                <h1 className="mb-6 text-4xl font-black leading-[1.1] text-white sm:text-5xl md:mb-8 md:text-8xl">
                   الشاي الصحراوي <br />
                   <span className="text-gold-shimmer">الممتاز</span>
                 </h1>
-                <p className="mb-12 text-lg font-medium leading-relaxed text-white/70 md:text-xl">
+                <p className="mb-8 text-sm font-medium leading-relaxed text-white/70 sm:text-base md:mb-12 md:text-xl">
                   نقدم لكم أجود أنواع الشاي الصحراوي والمنتجات التقليدية المختارة بعناية فائقة من قلب الصحراء المغربية.
                 </p>
-                <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
+                <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
                   <Button 
                     size="lg" 
-                    className="h-16 rounded-2xl bg-gold px-12 text-lg font-black text-oasis shadow-2xl shadow-gold/20 transition-all hover:bg-gold-light hover:scale-105 active:scale-95"
+                    className="h-14 w-full rounded-2xl bg-gold px-8 text-base font-black text-oasis shadow-2xl shadow-gold/20 transition-all hover:bg-gold-light hover:scale-105 active:scale-95 sm:h-16 sm:w-auto sm:px-12 sm:text-lg"
                     onClick={() => document.getElementById('products-grid')?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     اكتشف مجموعتنا
@@ -162,7 +170,7 @@ export default function App() {
                   <Button 
                     variant="outline" 
                     size="lg" 
-                    className="h-16 rounded-2xl border-white/20 bg-white/5 px-12 text-lg font-bold text-white backdrop-blur-md hover:bg-white/10"
+                    className="h-14 w-full rounded-2xl border-white/20 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-md hover:bg-white/10 sm:h-16 sm:w-auto sm:px-12 sm:text-lg"
                   >
                     قصة علامتنا
                   </Button>
@@ -170,14 +178,14 @@ export default function App() {
               </motion.div>
             </div>
             
-            {/* Scroll Indicator */}
+            {/* Scroll Indicator - Hidden on very small screens */}
             <motion.div 
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2"
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 md:bottom-10"
             >
-              <div className="h-12 w-6 rounded-full border-2 border-white/20 p-1">
-                <div className="h-2 w-full rounded-full bg-gold" />
+              <div className="h-10 w-5 rounded-full border-2 border-white/20 p-1 md:h-12 md:w-6">
+                <div className="h-1.5 w-full rounded-full bg-gold md:h-2" />
               </div>
             </motion.div>
           </section>
@@ -185,14 +193,14 @@ export default function App() {
 
         {/* Best Sellers Section */}
         {!selectedCategory && !searchQuery && (
-          <section className="mb-32">
-            <div className="mb-16 flex flex-col items-center text-center">
-              <span className="mb-4 text-[10px] font-black uppercase tracking-[0.4em] text-sunset">الإصدارات الخاصة</span>
-              <h2 className="text-4xl font-black text-oasis md:text-6xl">الأكثر مبيعاً</h2>
-              <div className="mt-6 h-1.5 w-24 rounded-full bg-gold" />
+          <section className="mb-16 md:mb-32">
+            <div className="mb-10 flex flex-col items-center text-center md:mb-16">
+              <span className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-sunset md:mb-4 md:tracking-[0.4em]">الإصدارات الخاصة</span>
+              <h2 className="text-3xl font-black text-oasis md:text-6xl">الأكثر مبيعاً</h2>
+              <div className="mt-4 h-1 w-16 rounded-full bg-gold md:mt-6 md:h-1.5 md:w-24" />
             </div>
             
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 md:gap-10 lg:grid-cols-3">
               {bestSellers.map((product) => (
                 <ProductCard
                   key={`best-${product.id}`}
@@ -397,10 +405,7 @@ export default function App() {
           setSearchQuery("");
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        onSearchClick={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          // Focus search input if possible
-        }}
+        onSearchClick={handleSearchFocus}
         whatsappNumber={CONTACT_INFO.whatsapp}
       />
 
