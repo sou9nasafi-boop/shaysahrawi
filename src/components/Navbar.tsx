@@ -24,10 +24,18 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
         {/* Logo Section */}
         <div className="flex items-center gap-4">
           <a href="/" className="group flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-oasis text-gold transition-transform group-hover:rotate-12">
-              <Sparkles className="h-7 w-7" />
-            </div>
-            <div className="flex flex-col leading-none">
+            <img 
+              src="https://i.ibb.co/SXwfnwQd/Logo-de-the-du-de-sert-authentique.png" 
+              alt="الشاي الصحراوي الممتاز" 
+              className="h-12 w-auto object-contain transition-transform group-hover:scale-110"
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                // Fallback to text if image fails
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="hidden flex flex-col leading-none">
               <span className="text-xl font-black tracking-tighter text-oasis">الشاي الصحراوي</span>
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-sunset">الممتاز</span>
             </div>
@@ -57,7 +65,7 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
           </div>
           
           <Sheet>
-            <SheetTrigger asChild>
+            <SheetTrigger render={
               <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl bg-oasis/5 text-oasis hover:bg-oasis hover:text-white transition-all md:h-12 md:w-12 md:rounded-2xl">
                 <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
                 {cartCount > 0 && (
@@ -66,7 +74,7 @@ export function Navbar({ cart, onRemoveFromCart, onUpdateQuantity, searchQuery, 
                   </span>
                 )}
               </Button>
-            </SheetTrigger>
+            } />
             <CartDrawer 
               cart={cart} 
               onRemove={onRemoveFromCart} 

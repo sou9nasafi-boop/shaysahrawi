@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ShoppingCart, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShoppingCart, Sparkles, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, WeightOption } from "../types";
 import { CONTACT_INFO } from "../constants";
@@ -14,6 +14,18 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardProps) {
   const [selectedOption, setSelectedOption] = useState<WeightOption>(product.options[0]);
+  const [viewers, setViewers] = useState(Math.floor(Math.random() * 8) + 3);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewers(prev => {
+        const change = Math.random() > 0.5 ? 1 : -1;
+        const newVal = prev + change;
+        return newVal < 2 ? 2 : newVal > 15 ? 15 : newVal;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleWhatsAppOrder = () => {
     const message = `السلام عليكم، أريد طلب ${product.name} بوزن ${selectedOption.label}`;
@@ -48,6 +60,14 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
             </div>
           </div>
         )}
+
+        {/* Live Viewers Badge */}
+        <div className="absolute left-4 top-4 z-10">
+          <div className="flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[10px] font-bold text-oasis shadow-sm border border-oasis/5">
+            <Eye className="h-3 w-3 text-gold" />
+            <span>{viewers} يشاهدون الآن</span>
+          </div>
+        </div>
       </div>
 
       {/* Product Info */}
