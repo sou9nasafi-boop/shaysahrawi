@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ShoppingCart, Sparkles, Eye } from "lucide-react";
+import { ShoppingCart, Sparkles, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, WeightOption } from "../types";
 import { CONTACT_INFO } from "../constants";
@@ -38,7 +38,7 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative flex flex-col overflow-hidden rounded-[2rem] bg-white premium-shadow transition-all hover:-translate-y-1 border border-oasis/5"
+      className="group relative flex flex-col overflow-hidden rounded-3xl bg-dark-2 border border-gold/10 transition-all hover:border-gold/30 hover:-translate-y-1"
       dir="rtl"
     >
       {/* Product Image */}
@@ -49,13 +49,13 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-oasis/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-80" />
         
         {/* Best Seller Badge */}
         {isBestSeller && (
           <div className="absolute right-4 top-4 z-10">
-            <div className="flex items-center gap-1.5 rounded-full bg-gold px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-oasis shadow-lg">
-              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-oasis" />
+            <div className="flex items-center gap-1.5 rounded-full bg-gold px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-dark shadow-lg">
+              <Sparkles className="h-3 w-3" />
               الأكثر مبيعاً
             </div>
           </div>
@@ -63,7 +63,7 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
 
         {/* Live Viewers Badge */}
         <div className="absolute left-4 top-4 z-10">
-          <div className="flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[10px] font-bold text-oasis shadow-sm border border-oasis/5">
+          <div className="flex items-center gap-1.5 rounded-full bg-dark/60 backdrop-blur-md px-3 py-1.5 text-[10px] font-bold text-text-premium border border-gold/10">
             <Eye className="h-3 w-3 text-gold" />
             <span>{viewers} يشاهدون الآن</span>
           </div>
@@ -71,37 +71,37 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
       </div>
 
       {/* Product Info */}
-      <div className="flex flex-1 flex-col p-5">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-sunset">
+      <div className="flex flex-1 flex-col p-6">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gold/60">
             {product.category}
           </span>
           {product.sales && product.sales > 500 && (
-            <span className="text-[10px] font-bold text-oasis/40">
+            <span className="text-[10px] font-bold text-text-muted">
               +{product.sales} طلب
             </span>
           )}
         </div>
         
-        <h3 className="mb-2 text-lg font-extrabold text-oasis leading-tight group-hover:text-sunset transition-colors">
+        <h3 className="font-serif mb-2 text-xl font-bold text-text-premium leading-tight group-hover:text-gold transition-colors">
           {product.name}
         </h3>
         
-        <p className="mb-4 line-clamp-2 text-xs leading-relaxed text-oasis/60">
+        <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-text-muted">
           {product.description}
         </p>
 
         {/* Options Selection */}
         <div className="mb-6">
-          <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
+          <div className="flex flex-wrap gap-2">
             {product.options.map((option) => (
               <button
                 key={option.label}
                 onClick={() => setSelectedOption(option)}
-                className={`flex-shrink-0 rounded-xl px-4 py-2 text-[10px] font-bold transition-all ${
+                className={`rounded-full px-4 py-2 text-[10px] font-bold transition-all border ${
                   selectedOption.label === option.label
-                    ? "bg-oasis text-white shadow-md"
-                    : "bg-oasis/5 text-oasis hover:bg-oasis/10"
+                    ? "bg-gold border-gold text-dark shadow-lg shadow-gold/20"
+                    : "bg-dark border-gold/10 text-text-muted hover:border-gold/30"
                 }`}
               >
                 {option.label}
@@ -113,9 +113,9 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
         {/* Price and Action */}
         <div className="mt-auto flex items-center justify-between gap-4">
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-oasis/40">السعر</span>
-            <span className="text-xl font-black text-oasis">
-              {selectedOption.price} <span className="text-xs font-bold">درهم</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">السعر</span>
+            <span className="text-2xl font-bold text-gold">
+              {selectedOption.price} <span className="text-xs font-medium">درهم</span>
             </span>
           </div>
           
@@ -123,15 +123,16 @@ export function ProductCard({ product, onAddToCart, isBestSeller }: ProductCardP
             <Button
               onClick={() => onAddToCart(product, selectedOption)}
               size="icon"
-              className="h-12 w-12 rounded-2xl bg-oasis/5 text-oasis hover:bg-oasis hover:text-white transition-all shadow-sm"
+              className="h-12 w-12 rounded-full bg-dark border border-gold/10 text-gold hover:bg-gold hover:text-dark transition-all"
             >
               <ShoppingCart className="h-5 w-5" />
             </Button>
             
             <Button
               onClick={handleWhatsAppOrder}
-              className="h-12 rounded-2xl bg-gold px-6 font-bold text-oasis shadow-lg shadow-gold/20 transition-all hover:bg-gold-light hover:scale-105 active:scale-95"
+              className="h-12 rounded-full bg-gold px-6 font-bold text-dark shadow-lg shadow-gold/20 transition-all hover:bg-gold-light hover:scale-105 active:scale-95"
             >
+              <MessageCircle className="h-4 w-4 ml-2" />
               اطلب الآن
             </Button>
           </div>

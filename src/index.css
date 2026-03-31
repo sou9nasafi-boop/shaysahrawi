@@ -11,13 +11,13 @@
 }
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', sans-serif;
-    --font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans Arabic', sans-serif;
+    --font-serif: 'Amiri', serif;
+    --font-sans: 'Tajawal', sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -57,16 +57,18 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
 
-    /* Nina Style Palette */
-    --color-sand-light: #FDFBF7;
-    --color-sand: #f4ede7;
-    --color-sand-dark: #e6d5bc;
-    --color-oasis: #1B4332; /* Deeper, more premium green */
-    --color-oasis-light: #2D6A4F;
-    --color-dune: #BC8A5F;
-    --color-sunset: #D4A373;
-    --color-gold: #C9A227;
-    --color-gold-light: #E9C46A;
+    /* Premium Sahrawi Palette */
+    --color-gold: #C8973A;
+    --color-gold-light: #E8C06A;
+    --color-gold-pale: #F5E6C0;
+    --color-dark: #0E0B07;
+    --color-dark-2: #1A1410;
+    --color-dark-3: #261E14;
+    --color-dark-4: #33271A;
+    --color-text-premium: #F0E8D8;
+    --color-text-muted: #A89878;
+    --color-sand-premium: #D4B896;
+    --color-whatsapp: #25D366;
 }
 
 @layer utilities {
@@ -187,7 +189,7 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-sand-light text-[#1c140d] overflow-x-hidden;
+    @apply bg-dark text-text-premium overflow-x-hidden;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
     }

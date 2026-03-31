@@ -4,7 +4,7 @@ import { PRODUCTS } from "../constants";
 import { ProductCard } from "../components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Product, WeightOption } from "../types";
-import { Star, Quote, ArrowRight } from "lucide-react";
+import { Star, Quote, ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface HomeProps {
@@ -19,78 +19,107 @@ export function Home({ onAddToCart }: HomeProps) {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Hero Section */}
-      <section className="relative mb-16 h-[70vh] w-full overflow-hidden rounded-[2rem] bg-oasis premium-shadow md:mb-32 md:h-[80vh] md:rounded-[3rem]">
-        <div className="absolute inset-0">
-          <img
-            src="https://picsum.photos/seed/desert-tea/1920/1080?blur=2"
-            className="h-full w-full object-cover opacity-40 mix-blend-overlay"
-            alt="Desert"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-oasis/20 via-transparent to-oasis" />
+    <div className="min-h-screen bg-dark">
+      {/* Hero Section from Snippet Style */}
+      <section className="relative pt-32 pb-20 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-dark-2 to-dark" />
+          <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
         </div>
-        
-        <div className="container relative mx-auto flex h-full flex-col items-center justify-center px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-3xl"
+
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <motion.img 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            src="https://i.ibb.co/SXwfnwQd/Logo-de-the-du-de-sert-authentique.png" 
+            alt="الشاي الصحراوي الممتاز" 
+            className="w-64 md:w-80 mx-auto mb-8 drop-shadow-[0_0_50px_rgba(200,151,58,0.3)]"
+          />
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-gold text-xs md:text-sm font-bold tracking-[0.4em] mb-4 uppercase"
           >
-            <span className="mb-4 inline-block text-[10px] font-black uppercase tracking-[0.4em] text-gold-shimmer md:mb-6 md:text-xs md:tracking-[0.6em]">
-              تراث الأصالة المغربية
-            </span>
-            <h1 className="mb-6 text-4xl font-black leading-[1.1] text-white sm:text-5xl md:mb-8 md:text-8xl">
-              الشاي الصحراوي <br />
-              <span className="text-gold-shimmer">الممتاز</span>
-            </h1>
-            <p className="mb-8 text-sm font-medium leading-relaxed text-white/70 sm:text-base md:mb-12 md:text-xl">
-              نقدم لكم أجود أنواع الشاي الصحراوي والمنتجات التقليدية المختارة بعناية فائقة من قلب الصحراء المغربية.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-              <Link to="/products">
-                <Button 
-                  size="lg" 
-                  className="h-14 w-full rounded-2xl bg-gold px-8 text-base font-black text-oasis shadow-2xl shadow-gold/20 transition-all hover:bg-gold-light hover:scale-105 active:scale-95 sm:h-16 sm:w-auto sm:px-12 sm:text-lg"
-                >
-                  اكتشف مجموعتنا
-                </Button>
-              </Link>
-              <Link to="/about">
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="h-14 w-full rounded-2xl border-white/20 bg-white/5 px-8 text-base font-bold text-white backdrop-blur-md hover:bg-white/10 sm:h-16 sm:w-auto sm:px-12 sm:text-lg"
-                >
-                  قصة علامتنا
-                </Button>
-              </Link>
-            </div>
+            ✦ آسفي — المغرب ✦
+          </motion.p>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="font-serif text-4xl md:text-7xl text-text-premium mb-6 leading-tight"
+          >
+            قائمة أسعارنا <span className="text-gold">الكاملة</span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+            className="text-text-muted font-serif italic text-lg md:text-2xl mb-12"
+          >
+            شاي صحراوي • عطور فاخرة • بخور أصيل
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="flex flex-wrap justify-center gap-4"
+          >
+            <Link to="/products">
+              <Button size="lg" className="bg-gold hover:bg-gold-light text-dark font-bold rounded-full px-10 h-14 text-lg transition-all hover:scale-105">
+                تصفح المنتجات
+              </Button>
+            </Link>
+            <a href={`https://wa.me/212649682152`} target="_blank">
+              <Button size="lg" variant="outline" className="border-gold/30 text-gold hover:bg-gold/10 rounded-full px-10 h-14 text-lg">
+                تواصل معنا
+              </Button>
+            </a>
           </motion.div>
         </div>
-        
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 md:bottom-10"
-        >
-          <div className="h-10 w-5 rounded-full border-2 border-white/20 p-1 md:h-12 md:w-6">
-            <div className="h-1.5 w-full rounded-full bg-gold md:h-2" />
-          </div>
-        </motion.div>
       </section>
 
-      {/* Best Sellers Section */}
-      <section className="mb-16 md:mb-32">
-        <div className="mb-10 flex flex-col items-center text-center md:mb-16">
-          <span className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-sunset md:mb-4 md:tracking-[0.4em]">الإصدارات الخاصة</span>
-          <h2 className="text-3xl font-black text-oasis md:text-6xl">الأكثر مبيعاً</h2>
-          <div className="mt-4 h-1 w-16 rounded-full bg-gold md:mt-6 md:h-1.5 md:w-24" />
+      {/* Categories Quick Access */}
+      <section className="py-12 bg-dark-2 border-y border-gold/10">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+            {[
+              { name: "الشاي الصحراوي", cat: "chai", icon: "🍵" },
+              { name: "العطور الفاخرة", cat: "attar", icon: "✨" },
+              { name: "البخور والعود", cat: "bakhour", icon: "🪔" },
+              { name: "زنابيل وكادو", cat: "chai-znbil", icon: "🎁" }
+            ].map((c) => (
+              <Link 
+                key={c.cat} 
+                to={`/products?cat=${c.cat}`}
+                className="group flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-gold/5 transition-all"
+              >
+                <span className="text-3xl group-hover:scale-110 transition-transform">{c.icon}</span>
+                <span className="text-text-muted group-hover:text-gold font-bold text-sm">{c.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Best Sellers */}
+      <section className="py-24 container mx-auto px-4">
+        <div className="flex items-center gap-6 mb-16">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-gold/30" />
+          <div className="text-center">
+            <p className="text-gold text-[10px] font-bold uppercase tracking-[0.4em] mb-2">الأكثر طلباً</p>
+            <h2 className="font-serif text-3xl md:text-5xl text-text-premium">مختاراتنا المميزة</h2>
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-gold/30" />
         </div>
         
-        <div className="grid gap-6 sm:grid-cols-2 md:gap-10 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {bestSellers.map((product) => (
             <ProductCard
               key={`best-${product.id}`}
@@ -102,97 +131,32 @@ export function Home({ onAddToCart }: HomeProps) {
         </div>
       </section>
 
-      {/* Brand Story Section */}
-      <section className="mb-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="relative aspect-square overflow-hidden rounded-[2.5rem] premium-shadow"
-        >
-          <img 
-            src="https://picsum.photos/seed/sahara-tea-story/1200/1200" 
-            alt="Our Story" 
-            className="h-full w-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-oasis/60 to-transparent" />
-          <div className="absolute bottom-8 right-8 text-white">
-            <p className="text-3xl font-extrabold">من قلب الصحراء</p>
-            <p className="text-gold-light font-medium">تقاليد تتوارثها الأجيال</p>
-          </div>
-        </motion.div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="space-y-6"
-        >
-          <div className="inline-block rounded-full bg-oasis/5 px-4 py-1 text-xs font-bold uppercase tracking-widest text-oasis">
-            قصتنا
-          </div>
-          <h2 className="text-4xl font-extrabold text-oasis leading-tight">
-            أكثر من مجرد شاي، <br />
-            <span className="text-sunset">إنها ثقافة وأسلوب حياة</span>
-          </h2>
-          <p className="text-lg text-oasis/70 leading-relaxed">
-            في "الشاي الصحراوي الممتاز"، نؤمن أن الشاي هو قلب الضيافة الصحراوية. نحن نختار أجود أوراق الشاي بعناية فائقة، ونقدم لكم تشكيلة من المنتجات التقليدية التي تعكس أصالة وجمال الصحراء المغربية.
-          </p>
-          <div className="grid grid-cols-2 gap-6 pt-4">
-            <div className="space-y-2">
-              <p className="text-3xl font-extrabold text-oasis">100%</p>
-              <p className="text-sm font-bold text-oasis/50 uppercase tracking-wider">منتجات طبيعية</p>
+      {/* Features from Snippet Vibe */}
+      <section className="py-24 bg-dark-3">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Sparkles className="text-gold w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-2xl text-text-premium">جودة استثنائية</h3>
+              <p className="text-text-muted text-sm leading-relaxed">نختار أجود أنواع الشاي والمنتجات الصحراوية بعناية فائقة لضمان أفضل تجربة لزبنائنا.</p>
             </div>
-            <div className="space-y-2">
-              <p className="text-3xl font-extrabold text-oasis">+5000</p>
-              <p className="text-sm font-bold text-oasis/50 uppercase tracking-wider">زبون سعيد</p>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Quote className="text-gold w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-2xl text-text-premium">أصالة التقاليد</h3>
+              <p className="text-text-muted text-sm leading-relaxed">نحافظ على روح الضيافة الصحراوية المغربية في كل منتج نقدمه لكم.</p>
+            </div>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Star className="text-gold w-8 h-8" />
+              </div>
+              <h3 className="font-serif text-2xl text-text-premium">خدمة متميزة</h3>
+              <p className="text-text-muted text-sm leading-relaxed">توصيل سريع وتعامل راقٍ يليق بزبناء الشاي الصحراوي الممتاز.</p>
             </div>
           </div>
-          <Link to="/about">
-            <Button variant="link" className="p-0 h-auto text-oasis font-bold gap-2 group">
-              اقرأ المزيد عن قصتنا <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </motion.div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="mb-24">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-black text-oasis md:text-5xl">ماذا يقول زبناؤنا</h2>
-          <p className="mt-4 text-oasis/60">ثقتكم هي سر نجاحنا</p>
-        </div>
-        
-        <div className="grid gap-8 md:grid-cols-3">
-          {[
-            { name: "فاطمة الزهراء", city: "العيون", text: "أجود أنواع الشاي التي تذوقتها، المذاق الصحراوي الأصيل فعلاً." },
-            { name: "محمد", city: "الدار البيضاء", text: "توصيل سريع وتعامل احترافي جداً. المنتجات وصلت في حالة ممتازة." },
-            { name: "ليلى", city: "أكادير", text: "العطور الصحراوية رائعة جداً وتدوم طويلاً. شكراً لكم على هذه الجودة." }
-          ].map((t, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="rounded-[2rem] bg-white p-8 shadow-sm border border-oasis/5"
-            >
-              <div className="mb-4 flex text-gold">
-                {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-              </div>
-              <Quote className="mb-4 h-8 w-8 text-oasis/10" />
-              <p className="mb-6 text-oasis/80 leading-relaxed italic">"{t.text}"</p>
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-full bg-oasis/5 flex items-center justify-center font-bold text-oasis">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <p className="font-bold text-oasis">{t.name}</p>
-                  <p className="text-xs text-oasis/40">{t.city}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </section>
     </div>

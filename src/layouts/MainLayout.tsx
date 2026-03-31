@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
 import { BottomNav } from "../components/BottomNav";
 import { CONTACT_INFO } from "../constants";
-import { CartItem, Product, WeightOption } from "../types";
+import { CartItem } from "../types";
 import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
-import { MessageCircle, Phone, MapPin, Sparkles, ArrowRight, X, HelpCircle, ChevronDown } from "lucide-react";
+import { MessageCircle, ArrowRight, X } from "lucide-react";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -51,7 +50,7 @@ export function MainLayout({
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-sand-light font-sans antialiased pb-24" dir="rtl">
+    <div className="min-h-screen bg-dark font-sans antialiased pb-24" dir="rtl">
       {/* Promo Banner */}
       <AnimatePresence>
         {showPromo && (
@@ -59,12 +58,12 @@ export function MainLayout({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="relative z-[60] bg-gold py-2 text-center text-[10px] font-black uppercase tracking-[0.2em] text-oasis md:text-xs"
+            className="relative z-[60] bg-gold py-2 text-center text-[10px] font-black uppercase tracking-[0.2em] text-dark md:text-xs"
           >
             توصيل مجاني للطلبات أكثر من 500 درهم 🚚 ✨
             <button 
               onClick={() => setShowPromo(false)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-oasis/50 hover:text-oasis"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-dark/50 hover:text-dark"
             >
               <X className="h-4 w-4" />
             </button>
@@ -80,133 +79,33 @@ export function MainLayout({
         onSearchChange={onSearchChange}
       />
 
-      <main>{children}</main>
+      <main className="text-text-premium">{children}</main>
 
-      {/* Newsletter Section */}
-      <section className="py-20 px-4 md:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative overflow-hidden rounded-[2rem] bg-oasis p-8 md:p-16 text-center text-white shadow-2xl">
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
-            <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-sunset/10 blur-3xl" />
-            
-            <div className="relative z-10 mx-auto max-w-2xl">
-              <Sparkles className="h-10 w-10 text-gold mx-auto mb-6 animate-pulse" />
-              <h2 className="text-3xl md:text-5xl font-serif italic mb-6 leading-tight">انضم إلى عائلتنا</h2>
-              <p className="text-white/70 text-sm md:text-lg mb-10 font-medium tracking-wide">
-                اشترك في نشرتنا الإخبارية لتصلك آخر العروض والمنتجات الجديدة مباشرة على بريدك الإلكتروني.
-              </p>
-              
-              <form className="flex flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
-                <input 
-                  type="email" 
-                  placeholder="بريدك الإلكتروني" 
-                  className="flex-1 rounded-full bg-white/10 border border-white/20 px-8 py-4 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
-                />
-                <button className="rounded-full bg-gold px-10 py-4 text-sm font-black uppercase tracking-[0.2em] text-oasis transition-all hover:bg-white hover:scale-105 active:scale-95 shadow-lg">
-                  اشترك الآن
-                </button>
-              </form>
-            </div>
-          </div>
+      {/* CTA Bar from Snippet */}
+      <div className="bg-dark-3 border-y border-gold/15 py-16 px-6 text-center mt-20">
+        <h2 className="font-serif text-3xl md:text-4xl text-text-premium mb-4">جاهز تطلب؟</h2>
+        <p className="text-text-muted mb-10 font-serif italic text-lg">راسلنا على واتساب وسنرد بسرعة: {CONTACT_INFO.phone}</p>
+        <a 
+          href={`https://wa.me/${CONTACT_INFO.whatsapp}`} 
+          target="_blank" 
+          className="inline-flex items-center gap-4 bg-whatsapp text-white px-10 py-4 rounded-full text-lg font-bold transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-whatsapp/30"
+        >
+          <MessageCircle className="h-6 w-6" />
+          <span>تواصل على واتساب</span>
+        </a>
+      </div>
+
+      <footer className="bg-dark py-16 px-6 text-center border-t border-gold/10">
+        <span className="font-serif text-2xl text-gold block mb-4">الشاي الصحراوي الممتاز</span>
+        <p className="text-text-muted text-sm mb-8">أجود الشاي والمنتجات الصحراوية</p>
+        <div className="flex flex-wrap justify-center gap-8 text-sm">
+          <a href={`https://wa.me/${CONTACT_INFO.whatsapp}`} target="_blank" className="text-text-muted hover:text-gold transition-colors">📱 {CONTACT_INFO.phone}</a>
+          <a href={`https://tiktok.com/@${CONTACT_INFO.tiktok}`} target="_blank" className="text-text-muted hover:text-gold transition-colors">🎵 @{CONTACT_INFO.tiktok}</a>
+          <span className="text-text-muted">📍 {CONTACT_INFO.location}</span>
         </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 px-4 md:px-8 bg-white/50">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <HelpCircle className="h-8 w-8 text-gold mx-auto mb-4" />
-            <h2 className="text-3xl font-serif text-oasis mb-2 italic tracking-tight">الأسئلة الشائعة</h2>
-            <p className="text-oasis/60 text-sm font-medium">كل ما تحتاج معرفته عن منتجاتنا وخدماتنا</p>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              {
-                q: "كيف يمكنني الطلب؟",
-                a: "يمكنك الطلب مباشرة عبر الموقع بإضافة المنتجات للسلة ثم إرسال الطلب عبر الواتساب، أو التواصل معنا مباشرة عبر الرقم الموجود في الموقع."
-              },
-              {
-                q: "كم يستغرق التوصيل؟",
-                a: "يستغرق التوصيل عادة من 24 إلى 48 ساعة في المدن الكبرى، ومن 3 إلى 5 أيام لباقي المدن المغربية."
-              },
-              {
-                q: "هل المنتجات أصلية؟",
-                a: "نعم، جميع منتجاتنا أصلية 100% ومستوردة مباشرة من المصادر الموثوقة في الصحراء المغربية."
-              },
-              {
-                q: "ما هي طرق الأداء المتاحة؟",
-                a: "نوفر خدمة الدفع عند الاستلام (Cash on Delivery) لضمان ثقتكم وراحتكم."
-              }
-            ].map((faq, i) => (
-              <details key={i} className="group bg-white rounded-2xl p-6 shadow-sm border border-oasis/5 cursor-pointer transition-all hover:shadow-md">
-                <summary className="flex items-center justify-between font-bold text-oasis list-none">
-                  <span className="text-sm md:text-base">{faq.q}</span>
-                  <ChevronDown className="h-5 w-5 text-gold transition-transform duration-300 group-open:rotate-180" />
-                </summary>
-                <p className="mt-4 text-oasis/70 leading-relaxed text-sm">
-                  {faq.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <footer className="mt-20 border-t border-oasis/10 bg-white py-16 text-oasis">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-            <div className="space-y-6">
-              <div className="flex flex-col items-start leading-none">
-                <img 
-                  src="https://i.ibb.co/SXwfnwQd/Logo-de-the-du-de-sert-authentique.png" 
-                  alt="الشاي الصحراوي الممتاز" 
-                  className="h-16 w-auto object-contain mb-4"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              <p className="text-sm leading-relaxed text-oasis/60">
-                نحن نفخر بتقديم أجود أنواع الشاي والمنتجات الصحراوية الأصيلة لزبنائنا الكرام، مع الحفاظ على التقاليد والجودة.
-              </p>
-            </div>
-            
-            <div className="space-y-6">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-sunset">تواصل معنا</h4>
-              <ul className="space-y-4 text-sm">
-                <li className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-oasis/5">
-                    <Phone className="h-4 w-4 text-oasis" />
-                  </div>
-                  <span className="font-medium">{CONTACT_INFO.phone}</span>
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-oasis/5">
-                    <MessageCircle className="h-4 w-4 text-oasis" />
-                  </div>
-                  <span className="font-medium">واتساب: {CONTACT_INFO.phone}</span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-oasis/5 mt-1">
-                    <MapPin className="h-4 w-4 text-oasis" />
-                  </div>
-                  <span className="font-medium">{CONTACT_INFO.location}</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-6">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-sunset">تابعنا</h4>
-              <div className="flex gap-4">
-                <a href={`https://www.tiktok.com/${CONTACT_INFO.tiktok}`} target="_blank" rel="noreferrer" className="flex h-12 w-12 items-center justify-center rounded-full bg-oasis text-white transition-transform hover:scale-110">
-                  <span className="font-bold">T</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="mt-16 border-t border-oasis/5 pt-8 text-center text-xs font-bold text-oasis/30">
-            © 2026 الشاي الصحراوي الممتاز. جميع الحقوق محفوظة.
-          </div>
-        </div>
+        <p className="mt-12 text-[10px] font-bold text-dark-4 uppercase tracking-widest">
+          © 2026 الشاي الصحراوي الممتاز. جميع الحقوق محفوظة.
+        </p>
       </footer>
 
       <BottomNav 
@@ -228,23 +127,12 @@ export function MainLayout({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
               onClick={scrollToTop}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-oasis shadow-xl transition-transform hover:scale-110 active:scale-95 border border-oasis/5"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-dark-2 text-gold shadow-xl transition-transform hover:scale-110 active:scale-95 border border-gold/10"
             >
               <ArrowRight className="h-5 w-5 -rotate-90" />
             </motion.button>
           )}
         </AnimatePresence>
-        
-        <motion.a
-          href={`https://wa.me/${CONTACT_INFO.whatsapp}`}
-          target="_blank"
-          rel="noreferrer"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-[#25D366]/20"
-        >
-          <MessageCircle className="h-7 w-7" />
-        </motion.a>
       </div>
 
       <Toaster position="bottom-center" />
