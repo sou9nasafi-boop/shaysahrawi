@@ -476,75 +476,96 @@
         }
 
         /* 
-           SOCIAL SIDEBAR 
+           FOOTER 
         */
-        .social-sidebar {
-            position: fixed;
-            left: 0;
-            top: 50%;
-            transform: translateX(-100%) translateY(-50%);
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid rgba(45, 110, 45, 0.3);
-            border-left: none;
-            border-radius: 0 12px 12px 0;
-            display: flex;
-            flex-direction: column;
-            padding: 10px 5px;
-            z-index: 999;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .social-sidebar.visible {
-            transform: translateX(0) translateY(-50%);
-        }
-
-        .social-icon {
-            padding: 12px;
-            font-size: 1.4rem;
-            color: var(--text);
-            text-decoration: none;
-            transition: transform 0.3s;
+        .main-footer {
+            background: linear-gradient(to top, #050706 0%, #0A0D0B 100%);
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            padding: 5rem 10% 2rem;
+            margin-top: 5rem;
             position: relative;
-            display: flex;
-            justify-content: center;
-            opacity: 0;
-            transform: translateX(-20px);
-            animation: slideInIcon 0.5s ease forwards;
+            z-index: 10;
         }
 
-        @keyframes slideInIcon {
-            to { opacity: 1; transform: translateX(0); }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+            text-align: right;
         }
 
-        .social-icon:nth-child(1) { animation-delay: 2.2s; }
-        .social-icon:nth-child(2) { animation-delay: 2.4s; }
-        .social-icon:nth-child(3) { animation-delay: 2.6s; }
-        .social-icon:nth-child(4) { animation-delay: 2.8s; }
-
-        .social-icon:hover {
-            transform: scale(1.25);
+        .footer-col h3 {
+            color: var(--gold);
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
         }
 
-        .social-icon .tooltip {
+        .footer-col h3::after {
+            content: "";
             position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%) translateX(10px);
-            background: var(--green);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--gold);
         }
 
-        .social-icon:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(-50%) translateX(15px);
+        .footer-col p, .footer-col a {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col a:hover {
+            color: var(--gold);
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+            justify-content: flex-start;
+        }
+
+        .footer-socials a {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .footer-socials a:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-5px) scale(1.1);
+        }
+
+        .footer-socials img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
 
         /* 
@@ -1239,21 +1260,6 @@
             .nav-center {
                 margin: 0 1rem;
             }
-            .social-sidebar {
-                top: auto;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                flex-direction: row;
-                justify-content: center;
-                transform: translateY(100%);
-                border-radius: 12px 12px 0 0;
-                border-left: 1px solid rgba(45, 110, 45, 0.3);
-                border-bottom: none;
-            }
-            .social-sidebar.visible {
-                transform: translateY(0);
-            }
             .hero h1 {
                 font-size: 2.2rem;
             }
@@ -1379,22 +1385,6 @@
             </div>
         </div>
     </nav>
-
-    <!-- SOCIAL SIDEBAR -->
-    <div class="social-sidebar" id="social-sidebar">
-        <a href="https://instagram.com/shaysahrawi" target="_blank" class="social-icon" style="color: #E1306C;">
-            📸 <span class="tooltip">Instagram</span>
-        </a>
-        <a href="https://tiktok.com/@shaysahrawi" target="_blank" class="social-icon" style="color: #fff;">
-            🎵 <span class="tooltip">TikTok</span>
-        </a>
-        <a href="https://facebook.com/shaysahrawi" target="_blank" class="social-icon" style="color: #1877F2;">
-            👤 <span class="tooltip">Facebook</span>
-        </a>
-        <a href="https://wa.me/212649682152" target="_blank" class="social-icon" style="color: #25D366;">
-            💬 <span class="tooltip">WhatsApp</span>
-        </a>
-    </div>
 
     <!-- MAIN CONTENT -->
     <main>
@@ -1528,29 +1518,33 @@
     </div>
 
     <!-- FOOTER -->
-    <footer>
-        <div class="footer-col">
-            <h3>شكون حنا</h3>
-            <p>نحن متجر متخصص في جلب أجود أنواع الشاي والمنتجات الصحراوية الأصيلة مباشرة من قلب الصحراء المغربية إلى مدينة آسفي.</p>
-        </div>
-        <div class="footer-col">
-            <h3>تواصل معنا</h3>
-            <p>📞 الهاتف: 06 49 68 21 52</p>
-            <p>📍 العنوان: مدينة آسفي، المغرب</p>
-            <p>📱 تيك توك: @SHAYSAHRAWI</p>
-        </div>
-        <div class="footer-col">
-            <h3>روابط سريعة</h3>
-            <p><a onclick="showPage('home')" style="cursor:pointer">الرئيسية</a></p>
-            <p><a onclick="showPage('tea')" style="cursor:pointer">الشاي</a></p>
-            <p><a onclick="showPage('perfumes')" style="cursor:pointer">العطور</a></p>
-            <p><a onclick="showPage('packs')" style="cursor:pointer">الباكات</a></p>
-            <p><a onclick="showPage('cart')" style="cursor:pointer">السلة</a></p>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>شكون حنا</h3>
+                <p>نحن متجر متخصص في جلب أجود أنواع الشاي والمنتجات الصحراوية الأصيلة مباشرة من قلب الصحراء المغربية إلى مدينة آسفي.</p>
+            </div>
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <p>📞 الهاتف: 06 49 68 21 52</p>
+                <p>📍 العنوان: مدينة آسفي، المغرب</p>
+            </div>
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <p><a onclick="showPage('home')" style="cursor:pointer">الرئيسية</a></p>
+                <p><a onclick="showPage('tea')" style="cursor:pointer">الشاي</a></p>
+                <p><a onclick="showPage('perfumes')" style="cursor:pointer">العطور</a></p>
+                <p><a onclick="showPage('packs')" style="cursor:pointer">الباكات</a></p>
+            </div>
         </div>
         <div class="copyright">
-            © 2025 الشاي الصحراوي الممتاز — جميع الحقوق محفوظة
+            © 2026 الشاي الصحراوي الممتاز — جميع الحقوق محفوظة
+            <span id="admin-trigger" style="opacity: 0; cursor: default; user-select: none; font-size: 0.5rem; margin-right: 5px;" onclick="openAdmin()">.</span>
         </div>
     </footer>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 
     <!-- PACK BUILDER MODAL -->
     <div id="pack-builder-modal" class="modal">
@@ -2211,15 +2205,64 @@
             renderReviews();
             updateCartUI();
             
-            // Show social sidebar after 2s
-            setTimeout(() => {
-                document.getElementById('social-sidebar').classList.add('visible');
-            }, 2000);
+            // Track Visit
+            trackVisit();
 
             // Initial reveal for hero
             setTimeout(() => {
                 document.querySelector('.hero').classList.add('reveal');
             }, 1500);
+        };
+
+        function trackVisit() {
+            let stats = JSON.parse(localStorage.getItem('shay_stats')) || { visits: 0, orders: [] };
+            stats.visits += 1;
+            localStorage.setItem('shay_stats', JSON.stringify(stats));
+        }
+
+        function openAdmin() {
+            // This will be handled by the React App.tsx
+            window.dispatchEvent(new CustomEvent('open-admin'));
+        }
+
+        // Update checkout to track orders
+        const originalCheckoutWhatsApp = checkoutWhatsApp;
+        window.checkoutWhatsApp = function() {
+            if (cart.length === 0) return;
+            
+            let stats = JSON.parse(localStorage.getItem('shay_stats')) || { visits: 0, orders: [] };
+            const order = {
+                id: Date.now(),
+                date: new Date().toLocaleString('ar-MA'),
+                items: cart.map(item => `${item.name} (${item.weight}) x${item.qty}`),
+                total: document.getElementById('total-price').innerText,
+                status: 'جديد'
+            };
+            stats.orders.push(order);
+            localStorage.setItem('shay_stats', JSON.stringify(stats));
+            
+            originalCheckoutWhatsApp();
+        };
+
+        const originalOrderNow = orderNow;
+        window.orderNow = function(productId) {
+            const p = products.find(prod => prod.id === productId);
+            const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+            const weight = card.querySelector('.weight-btn.active')?.innerText || Object.keys(p.prices)[0];
+            const price = p.promo ? p.promo.new : p.prices[weight];
+            
+            let stats = JSON.parse(localStorage.getItem('shay_stats')) || { visits: 0, orders: [] };
+            const order = {
+                id: Date.now(),
+                date: new Date().toLocaleString('ar-MA'),
+                items: [`${p.name} (${weight}) x1`],
+                total: price,
+                status: 'جديد'
+            };
+            stats.orders.push(order);
+            localStorage.setItem('shay_stats', JSON.stringify(stats));
+            
+            originalOrderNow(productId);
         };
     </script>
 </body>
