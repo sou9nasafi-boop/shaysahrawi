@@ -1,95 +1,103 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import SocialFooter from "./components/SocialFooter";
-import AdminDashboard from "./components/AdminDashboard";
+import React, { useState, useMemo } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import ProductCard from './components/ProductCard';
+import CategoryFilter from './components/CategoryFilter';
+import Footer from './components/Footer';
+import { PRODUCTS } from './constants';
+import { Category } from './types';
 
 export default function App() {
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [activeCategory, setActiveCategory] = useState<Category>('all');
 
-  useEffect(() => {
-    const handleOpenAdmin = () => {
-      setIsAdminOpen(true);
-    };
-    window.addEventListener('open-admin', handleOpenAdmin);
-    return () => window.removeEventListener('open-admin', handleOpenAdmin);
-  }, []);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username === "ahmed" && password === "1234") {
-      setIsLoggedIn(true);
-      setError("");
-    } else {
-      setError("خطأ في اسم المستخدم أو كلمة المرور");
-    }
-  };
+  const filteredProducts = useMemo(() => {
+    if (activeCategory === 'all') return PRODUCTS;
+    return PRODUCTS.filter(p => p.category === activeCategory);
+  }, [activeCategory]);
 
   return (
-    <div className="bg-[#0A0A0A] text-[#F0E8D8] font-sans" dir="rtl">
-      <SocialFooter />
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F0E8D8] font-sans selection:bg-[#C8973A] selection:text-black" dir="rtl">
+      <Navbar />
+      
+      <main>
+        <Hero />
 
-      <AnimatePresence>
-        {isAdminOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            {!isLoggedIn ? (
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-[#111] border border-[#C8973A]/20 p-8 rounded-2xl w-full max-w-md shadow-2xl relative"
-              >
-                <button 
-                  onClick={() => setIsAdminOpen(false)}
-                  className="absolute top-4 left-4 text-white/20 hover:text-white transition-colors"
-                >
-                  ✕
-                </button>
-                <h2 className="text-2xl font-serif text-[#C8973A] font-bold mb-6 text-center">تسجيل دخول المدير</h2>
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div>
-                    <label className="block text-sm text-[#C8973A] mb-1">اسم المستخدم</label>
-                    <input 
-                      type="text" 
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-[#C8973A] outline-none transition-all"
-                      placeholder="ahmed"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-[#C8973A] mb-1">كلمة المرور</label>
-                    <input 
-                      type="password" 
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-[#C8973A] outline-none transition-all"
-                      placeholder="••••"
-                    />
-                  </div>
-                  {error && <p className="text-red-500 text-xs text-center">{error}</p>}
-                  <button 
-                    type="submit"
-                    className="w-full bg-[#C8973A] text-black font-bold py-3 rounded-lg hover:bg-[#E8C06A] transition-all transform active:scale-95"
-                  >
-                    دخول
-                  </button>
-                </form>
-              </motion.div>
-            ) : (
-              <AdminDashboard onClose={() => {
-                setIsAdminOpen(false);
-                setIsLoggedIn(false);
-                setUsername("");
-                setPassword("");
-              }} />
-            )}
+        {/* Catalog Section */}
+        <section id="catalog" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C8973A] mb-4">كتالوج المنتجات</h2>
+            <div className="w-24 h-1 bg-[#C8973A] mx-auto mb-8 rounded-full" />
+            <p className="text-[#F0E8D8]/60 max-w-2xl mx-auto text-lg">
+              اختر ما يناسبك من مجموعتنا المختارة بعناية من أجود أنواع الشاي، العطور الفاخرة، والملحفة الصحراوية الأصيلة.
+            </p>
           </div>
-        )}
-      </AnimatePresence>
+
+          <CategoryFilter 
+            activeCategory={activeCategory} 
+            onCategoryChange={setActiveCategory} 
+          />
+
+          <motion.div 
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-20 text-[#F0E8D8]/40">
+              لا توجد منتجات في هذه الفئة حالياً.
+            </div>
+          )}
+        </section>
+
+        {/* About Section */}
+        <section id="about" className="py-24 bg-[#111] relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#C8973A]">حكايتنا من قلب الصحراء</h2>
+                <p className="text-lg text-[#F0E8D8]/80 leading-relaxed">
+                  بدأت رحلتنا من شغفنا بالتقاليد الصحراوية العريقة. نحن نؤمن أن الشاي ليس مجرد مشروب، بل هو رمز للكرم والضيافة. 
+                  لذلك، نحرص على جلب أجود الأنواع التي ترضي ذوقكم الرفيع.
+                </p>
+                <p className="text-lg text-[#F0E8D8]/80 leading-relaxed">
+                  كما نقدم لكم مجموعة من العطور التي تعبق برائحة الأصالة، والملحفة التي تعكس جمال وأناقة المرأة الصحراوية.
+                </p>
+                <div className="grid grid-cols-2 gap-6 pt-4">
+                  <div className="border-l-2 border-[#C8973A] pr-4">
+                    <div className="text-3xl font-bold text-[#C8973A]">100%</div>
+                    <div className="text-sm text-[#F0E8D8]/60">منتجات طبيعية</div>
+                  </div>
+                  <div className="border-l-2 border-[#C8973A] pr-4">
+                    <div className="text-3xl font-bold text-[#C8973A]">24/7</div>
+                    <div className="text-sm text-[#F0E8D8]/60">دعم متواصل</div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-square rounded-2xl overflow-hidden border-2 border-[#C8973A]/20">
+                  <img 
+                    src="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=80&w=1000" 
+                    alt="Desert Culture" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-[#C8973A] rounded-2xl -z-10 opacity-20" />
+                <div className="absolute -top-6 -left-6 w-48 h-48 border-2 border-[#C8973A] rounded-2xl -z-10 opacity-20" />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

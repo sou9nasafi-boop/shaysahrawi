@@ -1,1 +1,250 @@
-export const APP_NAME = "New App";
+import { Product } from './types';
+
+export const LOGO_URL = "https://i.ibb.co/SXwfnwQd/Logo-de-the-du-de-sert-authentique.png";
+
+export const PRODUCTS: Product[] = [
+  // Tea (Shay) - From PDF
+  {
+    id: 'tea-1',
+    name: 'شاي خطاري',
+    category: 'tea',
+    prices: { '200g': 28, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي صحراوي أصيل يتميز بنكهة قوية ولون ذهبي جذاب.',
+    image: 'https://images.unsplash.com/photo-1594631252845-29fc4586c562?auto=format&fit=crop&q=80&w=800',
+    features: ['نكهة قوية', 'لون ذهبي', 'طبيعي 100%']
+  },
+  {
+    id: 'tea-2',
+    name: 'شاي وين مذكور',
+    category: 'tea',
+    prices: { '200g': 25, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي صحراوي ممتاز مختار بعناية.',
+    image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-3',
+    name: 'شاي نور الجنوب',
+    category: 'tea',
+    prices: { '200g': 22, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي صحراوي بنكهة الجنوب الأصيلة.',
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-4',
+    name: 'شاي مهندس',
+    category: 'tea',
+    prices: { '200g': 17, '500g': 35, '1kg': 70, '2kg': 135 },
+    description: 'شاي عالي الجودة بمذاق متوازن.',
+    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-5',
+    name: 'شاي أهل كلميم',
+    category: 'tea',
+    prices: { '100g': 10, '200g': 20, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي تقليدي من قلب واد نون.',
+    image: 'https://images.unsplash.com/photo-1544787210-228394c3d3e0?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-6',
+    name: 'شاي القاضي زنبيل',
+    category: 'tea',
+    prices: { '200g': 45, '500g': 85, '1kg': 165, '2kg': 330 },
+    description: 'شاي زنبيل فاخر بجودة استثنائية. متوفر الآن بصورته الجديدة والأصيلة.',
+    image: 'https://i.ibb.co/20fMqTLQ/Luxury-commercial-product-202604111852.jpg',
+    secondaryImage: 'https://i.ibb.co/mdhqsLJ/Luxury-cinematic-commercial-202604111856.jpg',
+  },
+  {
+    id: 'tea-7',
+    name: 'شاي الجرهادية زنبيل',
+    category: 'tea',
+    prices: { '200g': 45, '500g': 85, '1kg': 165, '2kg': 330 },
+    description: 'شاي زنبيل أصيل بنكهة الجرهادية.',
+    image: 'https://images.unsplash.com/photo-1515696455651-41f87fe7243a?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-8',
+    name: 'شاي تيليلا',
+    category: 'tea',
+    prices: { '200g': 15, '500g': 35, '1kg': 60, '2kg': 110 },
+    description: 'شاي صحراوي خفيف ومنعش.',
+    image: 'https://images.unsplash.com/photo-1594631252845-29fc4586c562?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-9',
+    name: 'شاي بن خليل',
+    category: 'tea',
+    prices: { '200g': 23, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي صحراوي أصيل بجودة عالية.',
+    image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-10',
+    name: 'شاي واد بن خليل',
+    category: 'tea',
+    prices: { '100g': 8, '200g': 15, '500g': 35, '1kg': 70, '2kg': 140 },
+    description: 'شاي واد بن خليل المتميز.',
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-11',
+    name: 'شاي النكشة',
+    category: 'tea',
+    prices: { '200g': 16, '500g': 35, '1kg': 70, '2kg': 140 },
+    description: 'شاي النكشة الصحراوي الأصيل.',
+    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-12',
+    name: 'شاي أمحيريش',
+    category: 'tea',
+    prices: { '200g': 20, '500g': 50, '1kg': 100, '2kg': 200 },
+    description: 'شاي أمحيريش ذو النكهة القوية.',
+    image: 'https://images.unsplash.com/photo-1544787210-228394c3d3e0?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-13',
+    name: 'شاي محيريش',
+    category: 'tea',
+    prices: { '200g': 15, '500g': 35, '1kg': 70, '2kg': 140 },
+    description: 'شاي محيريش التقليدي.',
+    image: 'https://images.unsplash.com/photo-1563911191283-d44555755a2a?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-14',
+    name: 'شاي قرن ذهبي',
+    category: 'tea',
+    prices: { '200g': 35, '500g': 80, '1kg': 150, '2kg': 300 },
+    description: 'شاي قرن ذهبي الفاخر.',
+    image: 'https://images.unsplash.com/photo-1515696455651-41f87fe7243a?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-15',
+    name: 'شاي وحدات',
+    category: 'tea',
+    prices: { '200g': 30, '500g': 65, '1kg': 120, '2kg': 240 },
+    description: 'شاي وحدات المختار بعناية.',
+    image: 'https://images.unsplash.com/photo-1594631252845-29fc4586c562?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-16',
+    name: 'شاي دكار',
+    category: 'tea',
+    prices: { '200g': 25, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي دكار الصحراوي الأصيل.',
+    image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-17',
+    name: 'شاي دمعة (لحسن كنتاوي)',
+    category: 'tea',
+    prices: { '200g': 25, '500g': 60, '1kg': 110, '2kg': 240 },
+    description: 'شاي دمعة من تشكيلة لحسن كنتاوي.',
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-18',
+    name: 'شاي فم الواد (لحسن كنتاوي)',
+    category: 'tea',
+    prices: { '200g': 25, '500g': 55, '1kg': 100, '2kg': 200 },
+    description: 'شاي فم الواد المتميز.',
+    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-19',
+    name: 'شاي شرم الشيخ (لحسن كنتاوي)',
+    category: 'tea',
+    prices: { '200g': 30, '500g': 65, '1kg': 120, '2kg': 240 },
+    description: 'شاي شرم الشيخ الفاخر.',
+    image: 'https://images.unsplash.com/photo-1544787210-228394c3d3e0?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-20',
+    name: 'شاي تدركيت',
+    category: 'tea',
+    prices: { '200g': 23, '500g': 55, '1kg': 110, '2kg': 220 },
+    description: 'شاي تدركيت الصحراوي الأصيل.',
+    image: 'https://images.unsplash.com/photo-1563911191283-d44555755a2a?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-22',
+    name: 'شاي لحسن كنتاوي زنبيل ممتاز',
+    category: 'tea',
+    prices: { '200g': 30, '500g': 75, '1kg': 140, '2kg': 280 },
+    description: 'شاي زنبيل ممتاز من تشكيلة لحسن كنتاوي.',
+    image: 'https://images.unsplash.com/photo-1515696455651-41f87fe7243a?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-24',
+    name: 'شاي درع الخيل',
+    category: 'tea',
+    prices: { '200g': 30, '500g': 70, '1kg': 125, '2kg': 250 },
+    description: 'شاي درع الخيل ذو الجودة العالية.',
+    image: 'https://images.unsplash.com/photo-1594631252845-29fc4586c562?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-25',
+    name: 'شاي أسراك',
+    category: 'tea',
+    prices: { '200g': 23, '500g': 60, '1kg': 120, '2kg': 240 },
+    description: 'شاي أسراك الصحراوي الأصيل.',
+    image: 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 'tea-26',
+    name: 'شاي وصية',
+    category: 'tea',
+    prices: { '200g': 25, '500g': 60, '1kg': 120, '2kg': 240 },
+    description: 'شاي وصية المختار بعناية.',
+    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800',
+  },
+  
+  // Perfumes (Ri7a)
+  {
+    id: 'perfume-1',
+    name: 'عطر رمال الصحراء',
+    category: 'perfume',
+    prices: { 'قطعة واحدة': 120 },
+    description: 'مزيج ساحر من العود والمسك يعكس هدوء وجمال ليالي الصحراء.',
+    image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=800',
+    features: ['ثبات عالي', 'رائحة شرقية', 'فواح']
+  },
+  {
+    id: 'perfume-2',
+    name: 'مسك الختام',
+    category: 'perfume',
+    prices: { 'قطعة واحدة': 85 },
+    description: 'عطر ناعم ومنعش يدوم طويلاً، مثالي للاستخدام اليومي.',
+    image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800',
+    features: ['ناعم', 'منعش', 'طبيعي']
+  },
+  
+  // Melhafa (Lmal7af)
+  {
+    id: 'melhafa-1',
+    name: 'ملحفة النيلة - الأصالة',
+    category: 'melhafa',
+    prices: { 'قطعة واحدة': 250 },
+    description: 'ملحفة صحراوية تقليدية مصنوعة من أجود أنواع القماش مع لمسة النيلة الأصلية.',
+    image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=800',
+    features: ['قماش رفيع', 'ألوان ثابتة', 'تصميم أصيل']
+  },
+  {
+    id: 'melhafa-2',
+    name: 'ملحفة الحرير - الأناقة',
+    category: 'melhafa',
+    prices: { 'قطعة واحدة': 450 },
+    description: 'ملحفة فاخرة للمناسبات الخاصة، تتميز بنعومة الحرير وألوانها الزاهية.',
+    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=800',
+    features: ['حرير طبيعي', 'ألوان زاهية', 'فاخرة']
+  }
+];
+
+export const CONTACT_INFO = {
+  phone: "06 49 68 21 52",
+  whatsapp: "212649682152",
+  address: "مدينة آسفي، المغرب",
+  tiktok: "shaysahrawi",
+  instagram: "shaysahrawi",
+  facebook: "shaysahrawi"
+};
