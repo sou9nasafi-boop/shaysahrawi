@@ -16,13 +16,13 @@ const categories: { id: Category; label: string }[] = [
 
 export default function CategoryFilter({ activeCategory, onCategoryChange }: CategoryFilterProps) {
   return (
-    <div className="flex flex-wrap justify-center gap-4 mb-12">
+    <div className="flex overflow-x-auto sm:flex-wrap justify-start sm:justify-center gap-3 md:gap-4 mb-10 md:mb-16 pb-4 sm:pb-0 no-scrollbar">
       {categories.map((cat) => (
         <button
           key={cat.id}
           onClick={() => onCategoryChange(cat.id)}
           className={cn(
-            "px-8 py-3 rounded-full font-bold transition-all border",
+            "px-6 md:px-8 py-2.5 md:py-3 rounded-full font-bold transition-all border whitespace-nowrap text-sm md:text-base",
             activeCategory === cat.id
               ? "bg-[#C8973A] text-black border-[#C8973A] shadow-lg shadow-[#C8973A]/20"
               : "bg-transparent text-[#F0E8D8] border-white/10 hover:border-[#C8973A]/50"
