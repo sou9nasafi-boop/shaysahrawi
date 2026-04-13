@@ -1,49 +1,13 @@
-import { initializeApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  serverTimestamp, 
-  getDocs, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  query, 
-  orderBy 
-} from 'firebase/firestore';
-import { Product } from '../types';
+import { Product, Message } from '../types';
 
-// Default placeholder config
-const defaultFirebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "your-app.firebaseapp.com",
-  projectId: "your-app",
-  storageBucket: "your-app.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
-};
+// API Fallback for synchronization when Firebase is unavailable
+const API_BASE = '/api';
 
-// In AI Studio, firebase-applet-config.json is provided after setup
-// We initialize with defaults and will update if config is found
-let firebaseConfig = defaultFirebaseConfig;
-let firestoreDatabaseId: string | undefined = undefined;
-
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firestoreDatabaseId);
-
-// Products CRUD
 export const getProducts = async (): Promise<Product[]> => {
-  // Skip if using placeholder config
-  if (firebaseConfig.apiKey === "AIzaSy...") {
-    return [];
-  }
   try {
-    const q = query(collection(db, 'products'), orderBy('name', 'asc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Product[];
+    const res = await fetch(`${API_BASE}/products`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    return await res.json();
   } catch (e) {
     console.error("Error fetching products:", e);
     return [];
@@ -51,16 +15,14 @@ export const getProducts = async (): Promise<Product[]> => {
 };
 
 export const addProduct = async (product: Omit<Product, 'id'>) => {
-  if (firebaseConfig.apiKey === "AIzaSy...") {
-    console.log("Simulating product add (Firebase not configured):", product);
-    return "mock-id-" + Math.random().toString(36).substr(2, 9);
-  }
   try {
-    const docRef = await addDoc(collection(db, 'products'), {
-      ...product,
-      createdAt: serverTimestamp()
+    const res = await fetch(`${API_BASE}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
     });
-    return docRef.id;
+    const data = await res.json();
+    return data.id;
   } catch (e) {
     console.error("Error adding product:", e);
     throw e;
@@ -68,15 +30,11 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
 };
 
 export const updateProduct = async (id: string, product: Partial<Product>) => {
-  if (firebaseConfig.apiKey === "AIzaSy...") {
-    console.log("Simulating product update (Firebase not configured):", id, product);
-    return;
-  }
   try {
-    const docRef = doc(db, 'products', id);
-    await updateDoc(docRef, {
-      ...product,
-      updatedAt: serverTimestamp()
+    await fetch(`${API_BASE}/products/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
     });
   } catch (e) {
     console.error("Error updating product:", e);
@@ -85,29 +43,72 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
 };
 
 export const deleteProduct = async (id: string) => {
-  if (firebaseConfig.apiKey === "AIzaSy...") {
-    console.log("Simulating product delete (Firebase not configured):", id);
-    return;
-  }
   try {
-    await deleteDoc(doc(db, 'products', id));
+    await fetch(`${API_BASE}/products/${id}`, {
+      method: 'DELETE'
+    });
   } catch (e) {
     console.error("Error deleting product:", e);
     throw e;
   }
 };
 
+export const sendMessage = async (message: { name: string, phone: string, content: string, city?: string }) => {
+  try {
+    let ip = 'unknown';
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      ip = ipData.ip || 'unknown';
+    } catch {}
+
+    const res = await fetch(`${API_BASE}/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        ...message, 
+        ip, 
+        userAgent: navigator.userAgent,
+        status: 'new' 
+      })
+    });
+    return await res.json();
+  } catch (e) {
+    console.error("Error sending message:", e);
+    throw e;
+  }
+};
+
+export const updateMessageStatus = async (id: string, status: 'new' | 'read' | 'replied') => {
+  try {
+    await fetch(`${API_BASE}/messages/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+  } catch (e) {
+    console.error("Error updating message status:", e);
+    throw e;
+  }
+};
+
 export const trackVisit = async () => {
   try {
-    // Fetch IP address
-    const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const ipData = await ipResponse.json();
-    
-    await addDoc(collection(db, 'visits'), {
-      timestamp: serverTimestamp(),
-      userAgent: navigator.userAgent,
-      path: window.location.pathname,
-      ip: ipData.ip || 'unknown'
+    let ip = 'unknown';
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      ip = ipData.ip || 'unknown';
+    } catch {}
+
+    await fetch(`${API_BASE}/stats/visits`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userAgent: navigator.userAgent,
+        path: window.location.pathname,
+        ip
+      })
     });
   } catch (e) {
     console.error("Error tracking visit:", e);
@@ -116,58 +117,21 @@ export const trackVisit = async () => {
 
 export const trackOrderClick = async (product: any, weight: string, price: number) => {
   try {
-    await addDoc(collection(db, 'orderClicks'), {
-      timestamp: serverTimestamp(),
-      productId: product.id,
-      productName: product.name,
-      weight,
-      price
+    await fetch(`${API_BASE}/stats/clicks`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        productId: product.id,
+        productName: product.name,
+        weight,
+        price
+      })
     });
   } catch (e) {
     console.error("Error tracking order click:", e);
   }
 };
 
-export const sendMessage = async (message: { name: string, phone: string, content: string, city?: string }) => {
-  // If using placeholder config, simulate success for UI testing
-  if (firebaseConfig.apiKey === "AIzaSy...") {
-    console.log("Simulating message send (Firebase not configured):", message);
-    return new Promise(resolve => setTimeout(resolve, 1000));
-  }
-
-  try {
-    let ip = 'unknown';
-    try {
-      // Fetch IP address for admin context with a timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const ipResponse = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
-      clearTimeout(timeoutId);
-      const ipData = await ipResponse.json();
-      ip = ipData.ip || 'unknown';
-    } catch (ipError) {
-      console.warn("Could not fetch IP for message:", ipError);
-    }
-
-    await addDoc(collection(db, 'messages'), {
-      ...message,
-      timestamp: serverTimestamp(),
-      ip,
-      userAgent: navigator.userAgent,
-      status: 'new'
-    });
-  } catch (e) {
-    console.error("Error sending message:", e);
-    throw e;
-  }
-};
-
-export const updateMessageStatus = async (id: string, status: 'read' | 'replied') => {
-  try {
-    const docRef = doc(db, 'messages', id);
-    await updateDoc(docRef, { status });
-  } catch (e) {
-    console.error("Error updating message status:", e);
-    throw e;
-  }
-};
+// Mock Firebase objects to avoid breaking imports
+export const db = {};
+export const auth = {};

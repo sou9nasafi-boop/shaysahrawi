@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { db, getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
 import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone, Search, Filter, Loader2 } from 'lucide-react';
 import { Product, Category } from '../types';
 import { PRODUCTS as INITIAL_PRODUCTS } from '../constants';
@@ -52,35 +51,31 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const vQuery = query(collection(db, 'visits'), orderBy('timestamp', 'desc'), limit(50));
-      const oQuery = query(collection(db, 'orderClicks'), orderBy('timestamp', 'desc'), limit(50));
+      const fetchData = async () => {
+        try {
+          const [vRes, cRes, pRes, mRes] = await Promise.all([
+            fetch('/api/stats/visits').then(r => r.json()),
+            fetch('/api/stats/clicks').then(r => r.json()),
+            fetch('/api/products').then(r => r.json()),
+            fetch('/api/messages').then(r => r.json())
+          ]);
 
-      const unsubVisits = onSnapshot(vQuery, (snap) => {
-        setVisits(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      const unsubOrders = onSnapshot(oQuery, (snap) => {
-        setOrders(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      const pQuery = query(collection(db, 'products'), orderBy('name', 'asc'));
-      const unsubProducts = onSnapshot(pQuery, (snap) => {
-        const fetchedProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
-        // If Firestore is empty (e.g. new setup), show initial products as fallback
-        setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
-      });
-
-      const mQuery = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(50));
-      const unsubMessages = onSnapshot(mQuery, (snap) => {
-        setMessages(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      });
-
-      return () => {
-        unsubVisits();
-        unsubOrders();
-        unsubProducts();
-        unsubMessages();
+          setVisits(vRes.reverse());
+          setOrders(cRes.reverse());
+          
+          const fetchedProducts = pRes;
+          setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
+          
+          setMessages(mRes.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+        } catch (e) {
+          console.error("Error polling data:", e);
+        }
       };
+
+      fetchData();
+      const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
+
+      return () => clearInterval(interval);
     }
   }, [isAuthenticated]);
 
@@ -323,7 +318,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4">{order.weight}</td>
                           <td className="px-6 py-4 text-[#C8973A]">{order.price} درهم</td>
                           <td className="px-6 py-4 text-xs opacity-50">
-                            {order.timestamp?.toDate().toLocaleString('ar-MA')}
+                            {new Date(order.timestamp).toLocaleString('ar-MA')}
                           </td>
                         </tr>
                       ))}
@@ -354,7 +349,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 text-xs truncate max-w-[150px]">{visit.userAgent}</td>
                           <td className="px-6 py-4">{visit.path}</td>
                           <td className="px-6 py-4 text-xs opacity-50">
-                            {visit.timestamp?.toDate().toLocaleString('ar-MA')}
+                            {new Date(visit.timestamp).toLocaleString('ar-MA')}
                           </td>
                         </tr>
                       ))}
@@ -415,7 +410,7 @@ export default function AdminDashboard() {
                             {message.ip}
                           </div>
                           <div className="opacity-50">
-                            {message.timestamp?.toDate().toLocaleString('ar-MA')}
+                            {new Date(message.timestamp).toLocaleString('ar-MA')}
                           </div>
                         </div>
                       </div>
