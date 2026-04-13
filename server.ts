@@ -55,6 +55,7 @@ async function startServer() {
   });
 
   app.post("/api/messages", async (req, res) => {
+    console.log("Received message request:", req.body);
     try {
       const data = await fs.readFile(MESSAGES_FILE, "utf-8");
       const messages = JSON.parse(data);
@@ -65,6 +66,7 @@ async function startServer() {
       };
       messages.push(newMessage);
       await fs.writeFile(MESSAGES_FILE, JSON.stringify(messages, null, 2));
+      console.log("Message saved successfully:", newMessage.id);
       res.status(201).json(newMessage);
     } catch (error) {
       console.error("Error saving message:", error);
