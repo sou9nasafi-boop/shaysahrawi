@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { Phone, MapPin, Instagram, MessageCircle, Music2 } from 'lucide-react';
 import { CONTACT_INFO, LOGO_URL } from '../constants';
 
 export default function Footer() {
@@ -26,8 +26,8 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-4">
               {[
-                { icon: <Facebook size={20} />, href: `https://facebook.com/${CONTACT_INFO.facebook}` },
                 { icon: <Instagram size={20} />, href: `https://instagram.com/${CONTACT_INFO.instagram}` },
+                { icon: <Music2 size={20} />, href: `https://tiktok.com/@${CONTACT_INFO.tiktok}` },
                 { icon: <MessageCircle size={20} />, href: `https://wa.me/${CONTACT_INFO.whatsapp}` },
               ].map((social, i) => (
                 <a 
@@ -59,7 +59,7 @@ export default function Footer() {
           <div>
             <h4 className="text-[#F0E8D8] font-bold mb-8 uppercase tracking-widest text-sm">التصنيفات</h4>
             <ul className="space-y-4">
-              {['الشاي الصحراوي', 'العطور الفاخرة', 'الملحفة الصحراوية', 'الصمغ العربي'].map((item) => (
+              {['الشاي الصحراوي', 'العطور الفاخرة', 'منتجات صحراوية'].map((item) => (
                 <li key={item}>
                   <a href="#catalog" className="text-[#F0E8D8]/50 hover:text-[#C8973A] transition-colors font-light">
                     {item}
@@ -88,7 +88,7 @@ export default function Footer() {
 
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-[#F0E8D8]/30 text-xs font-light">
-            © {new Date().getFullYear()} الشاي الصحراوي الممتاز. جميع الحقوق محفوظة.
+            <a href="#admin" className="hover:text-[#C8973A] transition-colors cursor-default">©</a> {new Date().getFullYear()} الشاي الصحراوي الممتاز. جميع الحقوق محفوظة.
           </p>
           <div className="flex items-center gap-8">
             <a href="#" className="text-[#F0E8D8]/30 text-xs hover:text-[#C8973A] transition-colors">سياسة الخصوصية</a>

@@ -10,10 +10,9 @@ interface CategoryFilterProps {
 
 const categories: { id: Category; label: string }[] = [
   { id: 'all', label: 'الكل' },
-  { id: 'tea', label: 'الشاي' },
-  { id: 'gum', label: 'الصمغ العربي' },
-  { id: 'perfume', label: 'العطور' },
-  { id: 'melhafa', label: 'الملحفة' },
+  { id: 'tea', label: 'الشاي الصحراوي' },
+  { id: 'sahrawi', label: 'منتجات صحراوية' },
+  { id: 'perfume', label: 'العطور الفاخرة' },
 ];
 
 export default function CategoryFilter({ activeCategory, onCategoryChange }: CategoryFilterProps) {

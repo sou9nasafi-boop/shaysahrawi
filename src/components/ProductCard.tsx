@@ -5,17 +5,21 @@ import { Product } from '../types';
 import { CONTACT_INFO } from '../constants';
 import { cn } from '../lib/utils';
 
+import { trackOrderClick } from '../lib/firebase';
+
 interface ProductCardProps {
   product: Product;
+  onQuickView?: (product: Product) => void;
   key?: React.Key;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onQuickView }: ProductCardProps) {
   const weightOptions = Object.keys(product.prices);
   const [selectedWeight, setSelectedWeight] = useState(weightOptions[0]);
   const currentPrice = product.prices[selectedWeight];
 
   const handleWhatsAppOrder = () => {
+    trackOrderClick(product, selectedWeight, currentPrice);
     const message = `السلام عليكم، أريد طلب منتج: ${product.name} (${selectedWeight}) بسعر ${currentPrice} درهم.`;
     window.open(`https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -57,7 +61,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         {/* Quick Actions */}
         <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
-          <button className="bg-white text-black p-4 rounded-full hover:bg-[#C8973A] transition-colors shadow-2xl">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView?.(product);
+            }}
+            className="bg-white text-black p-4 rounded-full hover:bg-[#C8973A] hover:text-black transition-colors shadow-2xl"
+          >
             <Eye size={20} />
           </button>
           <button 
@@ -78,7 +88,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex justify-between items-center mb-3">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8973A] font-bold">
-            {product.category === 'tea' ? 'شاي صحراوي' : product.category === 'perfume' ? 'عطور' : product.category === 'gum' ? 'صمغ عربي' : 'ملحفة'}
+            {product.category === 'tea' ? 'شاي صحراوي' : 
+             product.category === 'perfume' ? 'عطور فاخرة' : 
+             'منتجات صحراوية'}
           </span>
           <div className="flex items-center gap-1 text-[#C8973A]">
             <Star size={12} fill="currentColor" />

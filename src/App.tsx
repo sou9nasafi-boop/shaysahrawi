@@ -1,22 +1,80 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Phone, MessageCircle, MapPin, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, ChevronRight, ChevronLeft, Star } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
 import CategoryFilter from './components/CategoryFilter';
 import Footer from './components/Footer';
-import { PRODUCTS, CONTACT_INFO } from './constants';
-import { Category } from './types';
+import QuickViewModal from './components/QuickViewModal';
+import { PRODUCTS as INITIAL_PRODUCTS, CONTACT_INFO } from './constants';
+import { Category, Product } from './types';
+import { trackVisit, getProducts, addProduct } from './lib/firebase';
+
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category>('all');
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    trackVisit();
+    // Simple way to handle /admin route without a router library
+    if (window.location.hash === '#admin') {
+      setIsAdminView(true);
+    }
+    
+    const handleHashChange = () => {
+      setIsAdminView(window.location.hash === '#admin');
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Fetch products from Firestore
+    const fetchProducts = async () => {
+      try {
+        let fetchedProducts = await getProducts();
+        
+        // Initial migration if Firestore is empty
+        if (fetchedProducts.length === 0) {
+          console.log("Migrating initial products to Firestore...");
+          try {
+            for (const p of INITIAL_PRODUCTS) {
+              const { id, ...productData } = p;
+              await addProduct(productData);
+            }
+            fetchedProducts = await getProducts();
+          } catch (migrationError) {
+            console.error("Migration failed, using initial products:", migrationError);
+          }
+        }
+        
+        setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
+      } catch (error) {
+        console.error("Error loading products:", error);
+        setProducts(INITIAL_PRODUCTS);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const filteredProducts = useMemo(() => {
-    if (activeCategory === 'all') return PRODUCTS;
-    return PRODUCTS.filter(p => p.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'all') return products;
+    return products.filter(p => p.category === activeCategory);
+  }, [activeCategory, products]);
+
+  if (isAdminView) {
+    return <AdminDashboard />;
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -81,30 +139,41 @@ export default function App() {
           </div>
 
           <div className="relative group">
-            <div 
-              ref={scrollContainerRef}
-              className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar scroll-smooth px-4 md:px-[calc((100vw-1280px)/2+32px)] pb-8 md:pb-12"
-              style={{ scrollSnapType: 'x mandatory' }}
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredProducts.map((product) => (
-                  <div 
-                    key={product.id} 
-                    className="flex-shrink-0 w-[260px] sm:w-[300px] md:w-[380px]"
-                    style={{ scrollSnapAlign: 'start' }}
-                  >
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </AnimatePresence>
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center py-32">
+                <div className="w-12 h-12 border-4 border-[#C8973A]/20 border-t-[#C8973A] rounded-full animate-spin" />
+              </div>
+            ) : (
+              <>
+                <div 
+                  ref={scrollContainerRef}
+                  className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar scroll-smooth px-4 md:px-[calc((100vw-1280px)/2+32px)] pb-8 md:pb-12"
+                  style={{ scrollSnapType: 'x mandatory' }}
+                >
+                  <AnimatePresence mode="popLayout">
+                    {filteredProducts.map((product) => (
+                      <div 
+                        key={product.id} 
+                        className="flex-shrink-0 w-[260px] sm:w-[300px] md:w-[380px]"
+                        style={{ scrollSnapAlign: 'start' }}
+                      >
+                        <ProductCard 
+                          product={product} 
+                          onQuickView={(p) => setSelectedProduct(p)}
+                        />
+                      </div>
+                    ))}
+                  </AnimatePresence>
+                </div>
 
-            {/* Mobile Gradient Fade */}
-            <div className="absolute inset-y-0 right-0 w-8 md:w-12 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
-            <div className="absolute inset-y-0 left-0 w-8 md:w-12 bg-gradient-to-r from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+                {/* Mobile Gradient Fade */}
+                <div className="absolute inset-y-0 right-0 w-8 md:w-12 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+                <div className="absolute inset-y-0 left-0 w-8 md:w-12 bg-gradient-to-r from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+              </>
+            )}
           </div>
 
-          {filteredProducts.length === 0 && (
+          {!isLoading && filteredProducts.length === 0 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -113,6 +182,66 @@ export default function App() {
               لا توجد منتجات في هذه الفئة حالياً.
             </motion.div>
           )}
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-24 md:py-40 bg-[#0A0A0A] relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <span className="text-[#C8973A] text-sm font-bold uppercase tracking-[0.3em] mb-4 block">ثقة زبائننا</span>
+              <h2 className="text-4xl md:text-6xl font-serif font-bold text-[#F0E8D8]">ماذا يقولون عنا</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "محمد العلمي",
+                  role: "عاشق للشاي الأصيل",
+                  content: "أفضل شاي صحراوي جربته على الإطلاق. النكهة قوية والأصالة حاضرة في كل رشفة. التوصيل كان سريعاً والتعامل احترافي جداً.",
+                  rating: 5
+                },
+                {
+                  name: "سارة بناني",
+                  role: "زبونة دائمة",
+                  content: "منتجات رائعة وجودة استثنائية. العلك (الصمغ العربي) نقي جداً ويضيف نكهة خاصة للشاي. أنصح الجميع بتجربته.",
+                  rating: 5
+                },
+                {
+                  name: "ياسين كنتاوي",
+                  role: "متذوق شاي",
+                  content: "تجربة فريدة من نوعها. الموقع سهل الاستخدام والطلب عبر واتساب مريح جداً. شاي 'خطاري' هو المفضل لدي الآن.",
+                  rating: 5
+                }
+              ].map((testimonial, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-[#111] p-10 rounded-[2.5rem] border border-white/5 relative group hover:border-[#C8973A]/30 transition-all duration-500"
+                >
+                  <div className="flex gap-1 mb-6 text-[#C8973A]">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} size={16} fill="currentColor" />
+                    ))}
+                  </div>
+                  <p className="text-lg text-[#F0E8D8]/60 font-light leading-relaxed mb-8 italic">
+                    "{testimonial.content}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-[#C8973A]/10 rounded-full flex items-center justify-center text-[#C8973A] font-serif font-bold text-xl">
+                      {testimonial.name[0]}
+                    </div>
+                    <div>
+                      <div className="text-[#F0E8D8] font-bold">{testimonial.name}</div>
+                      <div className="text-[#F0E8D8]/30 text-xs uppercase tracking-widest">{testimonial.role}</div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* About Section */}
@@ -264,6 +393,11 @@ export default function App() {
       </main>
 
       <Footer />
+
+      <QuickViewModal 
+        product={selectedProduct} 
+        onClose={() => setSelectedProduct(null)} 
+      />
     </div>
   );
 }

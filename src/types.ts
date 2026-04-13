@@ -1,7 +1,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'tea' | 'perfume' | 'melhafa' | 'gum';
+  category: 'tea' | 'perfume' | 'sahrawi';
   prices: Record<string, number>;
   description: string;
   image: string;
@@ -9,4 +9,4 @@ export interface Product {
   features?: string[];
 }
 
-export type Category = 'all' | 'tea' | 'perfume' | 'melhafa' | 'gum';
+export type Category = 'all' | 'tea' | 'perfume' | 'sahrawi';

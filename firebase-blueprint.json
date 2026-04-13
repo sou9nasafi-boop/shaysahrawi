@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "Visit": {
+      "title": "Visit",
+      "description": "Records a site visit",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ip": { "type": "string" },
+        "userAgent": { "type": "string" },
+        "path": { "type": "string" }
+      },
+      "required": ["timestamp", "ip"]
+    },
+    "OrderClick": {
+      "title": "OrderClick",
+      "description": "Records when a user clicks a WhatsApp order button",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "productId": { "type": "string" },
+        "productName": { "type": "string" },
+        "weight": { "type": "string" },
+        "price": { "type": "number" }
+      },
+      "required": ["timestamp", "productId"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A store product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["tea", "perfume", "sahrawi"] },
+        "prices": { "type": "object" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "secondaryImage": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "category", "prices", "image"]
+    },
+    "AdminConfig": {
+      "title": "AdminConfig",
+      "description": "Stores admin credentials (hashed/encrypted in real apps, simple for demo)",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/visits/{visitId}": {
+      "schema": "Visit",
+      "description": "Collection of site visits"
+    },
+    "/orderClicks/{clickId}": {
+      "schema": "OrderClick",
+      "description": "Collection of WhatsApp order clicks"
+    },
+    "/admin/config": {
+      "schema": "AdminConfig",
+      "description": "Admin configuration"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of store products"
+    }
+  }
+}
