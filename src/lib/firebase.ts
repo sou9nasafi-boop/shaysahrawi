@@ -33,6 +33,10 @@ export const db = getFirestore(app, firestoreDatabaseId);
 
 // Products CRUD
 export const getProducts = async (): Promise<Product[]> => {
+  // Skip if using placeholder config
+  if (firebaseConfig.apiKey === "AIzaSy...") {
+    return [];
+  }
   try {
     const q = query(collection(db, 'products'), orderBy('name', 'asc'));
     const snapshot = await getDocs(q);

@@ -17,8 +17,8 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [isAdminView, setIsAdminView] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [isLoading, setIsLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,31 +34,17 @@ export default function App() {
     
     window.addEventListener('hashchange', handleHashChange);
 
-    // Fetch products from Firestore
+    // Fetch products from Firestore in background
     const fetchProducts = async () => {
       try {
-        let fetchedProducts = await getProducts();
+        // Only attempt fetch if we have a real config (handled in firebase.ts)
+        const fetchedProducts = await getProducts();
         
-        // Initial migration if Firestore is empty
-        if (fetchedProducts.length === 0) {
-          console.log("Migrating initial products to Firestore...");
-          try {
-            for (const p of INITIAL_PRODUCTS) {
-              const { id, ...productData } = p;
-              await addProduct(productData);
-            }
-            fetchedProducts = await getProducts();
-          } catch (migrationError) {
-            console.error("Migration failed, using initial products:", migrationError);
-          }
+        if (fetchedProducts.length > 0) {
+          setProducts(fetchedProducts);
         }
-        
-        setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
       } catch (error) {
-        console.error("Error loading products:", error);
-        setProducts(INITIAL_PRODUCTS);
-      } finally {
-        setIsLoading(false);
+        console.error("Error loading products from Firestore:", error);
       }
     };
 
@@ -139,41 +125,33 @@ export default function App() {
           </div>
 
           <div className="relative group">
-            {isLoading ? (
-              <div className="flex justify-center py-32">
-                <div className="w-12 h-12 border-4 border-[#C8973A]/20 border-t-[#C8973A] rounded-full animate-spin" />
-              </div>
-            ) : (
-              <>
-                <div 
-                  ref={scrollContainerRef}
-                  className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar scroll-smooth px-4 md:px-[calc((100vw-1280px)/2+32px)] pb-8 md:pb-12"
-                  style={{ scrollSnapType: 'x mandatory' }}
-                >
-                  <AnimatePresence mode="popLayout">
-                    {filteredProducts.map((product) => (
-                      <div 
-                        key={product.id} 
-                        className="flex-shrink-0 w-[260px] sm:w-[300px] md:w-[380px]"
-                        style={{ scrollSnapAlign: 'start' }}
-                      >
-                        <ProductCard 
-                          product={product} 
-                          onQuickView={(p) => setSelectedProduct(p)}
-                        />
-                      </div>
-                    ))}
-                  </AnimatePresence>
-                </div>
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar scroll-smooth px-4 md:px-[calc((100vw-1280px)/2+32px)] pb-8 md:pb-12"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((product) => (
+                  <div 
+                    key={product.id} 
+                    className="flex-shrink-0 w-[260px] sm:w-[300px] md:w-[380px]"
+                    style={{ scrollSnapAlign: 'start' }}
+                  >
+                    <ProductCard 
+                      product={product} 
+                      onQuickView={(p) => setSelectedProduct(p)}
+                    />
+                  </div>
+                ))}
+              </AnimatePresence>
+            </div>
 
-                {/* Mobile Gradient Fade */}
-                <div className="absolute inset-y-0 right-0 w-8 md:w-12 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
-                <div className="absolute inset-y-0 left-0 w-8 md:w-12 bg-gradient-to-r from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
-              </>
-            )}
+            {/* Mobile Gradient Fade */}
+            <div className="absolute inset-y-0 right-0 w-8 md:w-12 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+            <div className="absolute inset-y-0 left-0 w-8 md:w-12 bg-gradient-to-r from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
           </div>
 
-          {!isLoading && filteredProducts.length === 0 && (
+          {filteredProducts.length === 0 && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
