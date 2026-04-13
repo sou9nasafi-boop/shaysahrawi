@@ -57,10 +57,13 @@ export const sendMessage = async (message: { name: string, phone: string, conten
   try {
     let ip = 'unknown';
     try {
-      const ipRes = await fetch('https://api.ipify.org?format=json');
+      // Use a faster IP service or skip if it's slow
+      const ipRes = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(2000) });
       const ipData = await ipRes.json();
       ip = ipData.ip || 'unknown';
-    } catch {}
+    } catch (ipErr) {
+      console.warn("IP fetch failed, using unknown", ipErr);
+    }
 
     const res = await fetch(`${API_BASE}/messages`, {
       method: 'POST',
@@ -72,9 +75,15 @@ export const sendMessage = async (message: { name: string, phone: string, conten
         status: 'new' 
       })
     });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Server responded with ${res.status}: ${errorText}`);
+    }
+
     return await res.json();
   } catch (e) {
-    console.error("Error sending message:", e);
+    console.error("Detailed error sending message:", e);
     throw e;
   }
 };

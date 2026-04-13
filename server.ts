@@ -55,16 +55,21 @@ async function startServer() {
   });
 
   app.post("/api/messages", async (req, res) => {
-    const data = await fs.readFile(MESSAGES_FILE, "utf-8");
-    const messages = JSON.parse(data);
-    const newMessage = {
-      id: Date.now().toString(),
-      ...req.body,
-      timestamp: new Date().toISOString()
-    };
-    messages.push(newMessage);
-    await fs.writeFile(MESSAGES_FILE, JSON.stringify(messages, null, 2));
-    res.status(201).json(newMessage);
+    try {
+      const data = await fs.readFile(MESSAGES_FILE, "utf-8");
+      const messages = JSON.parse(data);
+      const newMessage = {
+        id: Date.now().toString(),
+        ...req.body,
+        timestamp: new Date().toISOString()
+      };
+      messages.push(newMessage);
+      await fs.writeFile(MESSAGES_FILE, JSON.stringify(messages, null, 2));
+      res.status(201).json(newMessage);
+    } catch (error) {
+      console.error("Error saving message:", error);
+      res.status(500).json({ error: "Failed to save message" });
+    }
   });
 
   app.patch("/api/messages/:id", async (req, res) => {
