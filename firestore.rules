@@ -25,6 +25,12 @@ service cloud.firestore {
       allow read: if true; // Allowing read for admin dashboard
     }
 
+    // Messages: Anyone can create, only admin can read/update
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if true; // Allowing read for admin dashboard
+    }
+
     // Admin Config: Strictly protected
     match /admin/config {
       allow read, write: if false;

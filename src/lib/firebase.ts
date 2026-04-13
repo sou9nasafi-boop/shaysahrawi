@@ -115,3 +115,32 @@ export const trackOrderClick = async (product: any, weight: string, price: numbe
     console.error("Error tracking order click:", e);
   }
 };
+
+export const sendMessage = async (message: { name: string, phone: string, content: string, city?: string }) => {
+  try {
+    // Fetch IP address for admin context
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+
+    await addDoc(collection(db, 'messages'), {
+      ...message,
+      timestamp: serverTimestamp(),
+      ip: ipData.ip || 'unknown',
+      userAgent: navigator.userAgent,
+      status: 'new'
+    });
+  } catch (e) {
+    console.error("Error sending message:", e);
+    throw e;
+  }
+};
+
+export const updateMessageStatus = async (id: string, status: 'read' | 'replied') => {
+  try {
+    const docRef = doc(db, 'messages', id);
+    await updateDoc(docRef, { status });
+  } catch (e) {
+    console.error("Error updating message status:", e);
+    throw e;
+  }
+};

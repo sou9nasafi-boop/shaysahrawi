@@ -49,6 +49,22 @@
         "username": { "type": "string" },
         "password": { "type": "string" }
       }
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A user message/inquiry",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "content": { "type": "string" },
+        "city": { "type": "string" },
+        "ip": { "type": "string" },
+        "userAgent": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["new", "read", "replied"] }
+      },
+      "required": ["name", "phone", "content", "timestamp"]
     }
   },
   "firestore": {
@@ -67,6 +83,10 @@
     "/products/{productId}": {
       "schema": "Product",
       "description": "Collection of store products"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Collection of user messages"
     }
   }
 }

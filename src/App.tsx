@@ -9,7 +9,8 @@ import Footer from './components/Footer';
 import QuickViewModal from './components/QuickViewModal';
 import { PRODUCTS as INITIAL_PRODUCTS, CONTACT_INFO } from './constants';
 import { Category, Product } from './types';
-import { trackVisit, getProducts, addProduct } from './lib/firebase';
+import { trackVisit, getProducts, addProduct, sendMessage } from './lib/firebase';
+import { cn } from './lib/utils';
 
 import AdminDashboard from './components/AdminDashboard';
 
@@ -19,6 +20,9 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [isLoading, setIsLoading] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: '', phone: '', content: '', city: '' });
+  const [isSending, setIsSending] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,6 +61,21 @@ export default function App() {
     if (activeCategory === 'all') return products;
     return products.filter(p => p.category === activeCategory);
   }, [activeCategory, products]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSending(true);
+    try {
+      await sendMessage(contactForm);
+      setSendSuccess(true);
+      setContactForm({ name: '', phone: '', content: '', city: '' });
+      setTimeout(() => setSendSuccess(false), 5000);
+    } catch (error) {
+      alert('حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   if (isAdminView) {
     return <AdminDashboard />;
@@ -348,20 +367,70 @@ export default function App() {
                   className="bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-inner"
                 >
                   <h3 className="text-2xl font-serif font-bold text-[#F0E8D8] mb-8">أرسل لنا رسالة</h3>
-                  <form className="space-y-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest text-[#F0E8D8]/40 font-bold mr-4">الاسم الكامل</label>
-                      <input type="text" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors" placeholder="أدخل اسمك هنا..." />
+                  <form onSubmit={handleSendMessage} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-[#F0E8D8]/40 font-bold mr-4">الاسم الكامل</label>
+                        <input 
+                          required
+                          type="text" 
+                          value={contactForm.name}
+                          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors" 
+                          placeholder="أدخل اسمك هنا..." 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-[#F0E8D8]/40 font-bold mr-4">المدينة</label>
+                        <input 
+                          type="text" 
+                          value={contactForm.city}
+                          onChange={(e) => setContactForm({ ...contactForm, city: e.target.value })}
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors" 
+                          placeholder="مثلاً: طنجة، الدار البيضاء..." 
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-[#F0E8D8]/40 font-bold mr-4">رقم الهاتف</label>
-                      <input type="tel" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors" placeholder="06XXXXXXXX" />
+                      <input 
+                        required
+                        type="tel" 
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors" 
+                        placeholder="06XXXXXXXX" 
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] uppercase tracking-widest text-[#F0E8D8]/40 font-bold mr-4">الرسالة</label>
-                      <textarea rows={4} className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors resize-none" placeholder="كيف يمكننا مساعدتك؟"></textarea>
+                      <textarea 
+                        required
+                        rows={4} 
+                        value={contactForm.content}
+                        onChange={(e) => setContactForm({ ...contactForm, content: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 transition-colors resize-none" 
+                        placeholder="كيف يمكننا مساعدتك؟"
+                      ></textarea>
                     </div>
-                    <button className="w-full luxury-button bg-[#C8973A] text-black font-black text-sm shadow-xl">إرسال الرسالة</button>
+                    <button 
+                      disabled={isSending}
+                      className={cn(
+                        "w-full luxury-button font-black text-sm shadow-xl transition-all",
+                        sendSuccess ? "bg-green-500 text-white" : "bg-[#C8973A] text-black"
+                      )}
+                    >
+                      {isSending ? 'جاري الإرسال...' : sendSuccess ? 'تم الإرسال بنجاح!' : 'إرسال الرسالة'}
+                    </button>
+                    {sendSuccess && (
+                      <motion.p 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center text-green-500 text-xs font-bold"
+                      >
+                        شكراً لتواصلك معنا! سنتصل بك في أقرب وقت.
+                      </motion.p>
+                    )}
                   </form>
                 </motion.div>
               </div>

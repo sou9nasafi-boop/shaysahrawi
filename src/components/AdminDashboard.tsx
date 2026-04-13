@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { db, getProducts, addProduct, updateProduct, deleteProduct } from '../lib/firebase';
+import { db, getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3 } from 'lucide-react';
+import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone } from 'lucide-react';
 import { Product, Category } from '../types';
 import { cn } from '../lib/utils';
 
@@ -12,8 +12,9 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState('');
   const [visits, setVisits] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<'stats' | 'products'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'products' | 'messages'>('stats');
   
   // Product Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,10 +56,16 @@ export default function AdminDashboard() {
         setProducts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[]);
       });
 
+      const mQuery = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(50));
+      const unsubMessages = onSnapshot(mQuery, (snap) => {
+        setMessages(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      });
+
       return () => {
         unsubVisits();
         unsubOrders();
         unsubProducts();
+        unsubMessages();
       };
     }
   }, [isAuthenticated]);
@@ -216,6 +223,21 @@ export default function AdminDashboard() {
                 <LayoutGrid size={18} />
                 المنتجات
               </button>
+              <button 
+                onClick={() => setActiveTab('messages')}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 relative",
+                  activeTab === 'messages' ? "bg-[#C8973A] text-black" : "text-[#F0E8D8]/40 hover:text-[#F0E8D8]"
+                )}
+              >
+                <Mail size={18} />
+                الرسائل
+                {messages.filter(m => m.status === 'new').length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[8px] flex items-center justify-center text-white border-2 border-[#111]">
+                    {messages.filter(m => m.status === 'new').length}
+                  </span>
+                )}
+              </button>
             </div>
             <button 
               onClick={handleLogout}
@@ -325,6 +347,87 @@ export default function AdminDashboard() {
               </div>
             </div>
           </>
+        ) : activeTab === 'messages' ? (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-serif font-bold text-[#F0E8D8]">رسائل الزبائن</h2>
+              <div className="text-sm text-[#F0E8D8]/40">
+                إجمالي الرسائل: {messages.length}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              {messages.length === 0 ? (
+                <div className="bg-[#111] p-20 rounded-3xl border border-white/5 text-center">
+                  <Mail size={48} className="mx-auto text-[#F0E8D8]/10 mb-4" />
+                  <p className="text-[#F0E8D8]/20">لا توجد رسائل حالياً</p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <motion.div 
+                    key={message.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={cn(
+                      "bg-[#111] p-6 rounded-2xl border transition-all duration-300",
+                      message.status === 'new' ? "border-[#C8973A]/30 shadow-[0_0_20px_rgba(200,151,58,0.05)]" : "border-white/5 opacity-60"
+                    )}
+                  >
+                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                      <div className="flex-grow space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            message.status === 'new' ? "bg-[#C8973A] animate-pulse" : "bg-white/20"
+                          )} />
+                          <h3 className="text-lg font-bold text-[#F0E8D8]">{message.name}</h3>
+                          <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-[#F0E8D8]/40 uppercase tracking-widest">
+                            {message.city || 'مدينة غير معروفة'}
+                          </span>
+                        </div>
+                        <p className="text-[#F0E8D8]/70 leading-relaxed font-light">
+                          {message.content}
+                        </p>
+                        <div className="flex flex-wrap gap-4 text-xs text-[#F0E8D8]/30">
+                          <div className="flex items-center gap-2">
+                            <Phone size={12} />
+                            {message.phone}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <MousePointer2 size={12} />
+                            {message.ip}
+                          </div>
+                          <div className="opacity-50">
+                            {message.timestamp?.toDate().toLocaleString('ar-MA')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex md:flex-col justify-end gap-2">
+                        {message.status === 'new' && (
+                          <button 
+                            onClick={() => updateMessageStatus(message.id, 'read')}
+                            className="bg-[#C8973A]/10 text-[#C8973A] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#C8973A] hover:text-black transition-all flex items-center gap-2"
+                          >
+                            <CheckCircle2 size={14} />
+                            تحديد كمقروء
+                          </button>
+                        )}
+                        <a 
+                          href={`https://wa.me/${message.phone.replace(/\s/g, '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-green-500/10 text-green-500 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-500 hover:text-white transition-all flex items-center gap-2"
+                        >
+                          <ShoppingBag size={14} />
+                          رد عبر واتساب
+                        </a>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </div>
         ) : (
           <div className="space-y-8">
             <div className="flex justify-between items-center">
