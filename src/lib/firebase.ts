@@ -117,15 +117,30 @@ export const trackOrderClick = async (product: any, weight: string, price: numbe
 };
 
 export const sendMessage = async (message: { name: string, phone: string, content: string, city?: string }) => {
+  // If using placeholder config, simulate success for UI testing
+  if (firebaseConfig.apiKey === "AIzaSy...") {
+    console.log("Simulating message send (Firebase not configured):", message);
+    return new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
   try {
-    // Fetch IP address for admin context
-    const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const ipData = await ipResponse.json();
+    let ip = 'unknown';
+    try {
+      // Fetch IP address for admin context with a timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const ipResponse = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
+      clearTimeout(timeoutId);
+      const ipData = await ipResponse.json();
+      ip = ipData.ip || 'unknown';
+    } catch (ipError) {
+      console.warn("Could not fetch IP for message:", ipError);
+    }
 
     await addDoc(collection(db, 'messages'), {
       ...message,
       timestamp: serverTimestamp(),
-      ip: ipData.ip || 'unknown',
+      ip,
       userAgent: navigator.userAgent,
       status: 'new'
     });
