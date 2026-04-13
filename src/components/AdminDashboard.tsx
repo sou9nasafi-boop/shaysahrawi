@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone } from 'lucide-react';
+import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone, Search, Filter, Loader2 } from 'lucide-react';
 import { Product, Category } from '../types';
+import { PRODUCTS as INITIAL_PRODUCTS } from '../constants';
 import { cn } from '../lib/utils';
 
 export default function AdminDashboard() {
@@ -16,8 +17,13 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeTab, setActiveTab] = useState<'stats' | 'products' | 'messages'>('stats');
   
+  // Product Search & Filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
+  
   // Product Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     name: '',
@@ -27,6 +33,12 @@ export default function AdminDashboard() {
     image: '',
     secondaryImage: '',
     features: []
+  });
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
 
   const handleLogin = (e: React.FormEvent) => {
@@ -53,7 +65,9 @@ export default function AdminDashboard() {
 
       const pQuery = query(collection(db, 'products'), orderBy('name', 'asc'));
       const unsubProducts = onSnapshot(pQuery, (snap) => {
-        setProducts(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[]);
+        const fetchedProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
+        // If Firestore is empty (e.g. new setup), show initial products as fallback
+        setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
       });
 
       const mQuery = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(50));
@@ -72,6 +86,7 @@ export default function AdminDashboard() {
 
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       if (editingProduct) {
         await updateProduct(editingProduct.id, formData);
@@ -91,6 +106,8 @@ export default function AdminDashboard() {
       });
     } catch (error) {
       alert('حدث خطأ أثناء حفظ المنتج');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -430,59 +447,95 @@ export default function AdminDashboard() {
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <h2 className="text-2xl font-serif font-bold text-[#F0E8D8]">إدارة المنتجات</h2>
-              <button 
-                onClick={() => {
-                  setEditingProduct(null);
-                  setFormData({
-                    name: '',
-                    category: 'tea',
-                    prices: { '200g': 0 },
-                    description: '',
-                    image: '',
-                    secondaryImage: '',
-                    features: []
-                  });
-                  setIsModalOpen(true);
-                }}
-                className="bg-[#C8973A] text-black px-6 py-3 rounded-xl font-black flex items-center gap-2 hover:bg-[#E8C06A] transition-colors"
-              >
-                <Plus size={20} />
-                إضافة منتج جديد
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <div className="relative flex-grow sm:w-64">
+                  <input 
+                    type="text" 
+                    placeholder="بحث عن منتج..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-10 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 text-sm"
+                  />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#F0E8D8]/20" size={16} />
+                </div>
+                <select 
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value as any)}
+                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 text-sm"
+                >
+                  <option value="all">كل التصنيفات</option>
+                  <option value="tea">شاي</option>
+                  <option value="perfume">عطور</option>
+                  <option value="sahrawi">منتجات صحراوية</option>
+                </select>
+                <button 
+                  onClick={() => {
+                    setEditingProduct(null);
+                    setFormData({
+                      name: '',
+                      category: 'tea',
+                      prices: { '200g': 0 },
+                      description: '',
+                      image: '',
+                      secondaryImage: '',
+                      features: []
+                    });
+                    setIsModalOpen(true);
+                  }}
+                  className="bg-[#C8973A] text-black px-6 py-3 rounded-xl font-black flex items-center justify-center gap-2 hover:bg-[#E8C06A] transition-colors whitespace-nowrap"
+                >
+                  <Plus size={20} />
+                  إضافة منتج
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <div key={product.id} className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden group">
+              {filteredProducts.map((product) => (
+                <motion.div 
+                  layout
+                  key={product.id} 
+                  className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden group hover:border-[#C8973A]/30 transition-all duration-500"
+                >
                   <div className="aspect-square relative overflow-hidden">
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                      <button onClick={() => openEditModal(product)} className="bg-white text-black p-3 rounded-full hover:bg-[#C8973A] transition-colors">
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                      <button onClick={() => openEditModal(product)} className="bg-white text-black p-3 rounded-full hover:bg-[#C8973A] transition-colors shadow-lg">
                         <Pencil size={18} />
                       </button>
-                      <button onClick={() => handleDeleteProduct(product.id)} className="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors">
+                      <button onClick={() => handleDeleteProduct(product.id)} className="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors shadow-lg">
                         <Trash2 size={18} />
                       </button>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <div className="text-[10px] text-[#C8973A] font-bold uppercase tracking-widest mb-1">
-                      {product.category === 'tea' ? 'شاي' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
+                  <div className="p-5">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="text-[10px] text-[#C8973A] font-bold uppercase tracking-widest">
+                        {product.category === 'tea' ? 'شاي' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
+                      </div>
+                      <div className="text-[10px] text-[#F0E8D8]/20 font-mono">#{product.id.slice(-4)}</div>
                     </div>
-                    <h3 className="text-[#F0E8D8] font-bold truncate">{product.name}</h3>
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <h3 className="text-[#F0E8D8] font-bold truncate text-lg mb-3">{product.name}</h3>
+                    <div className="flex flex-wrap gap-1.5">
                       {Object.entries(product.prices).map(([weight, price]) => (
-                        <span key={weight} className="text-[9px] bg-white/5 text-[#F0E8D8]/40 px-2 py-0.5 rounded border border-white/5">
+                        <span key={weight} className="text-[10px] bg-white/5 text-[#F0E8D8]/60 px-2 py-1 rounded-lg border border-white/5 font-bold">
                           {weight}: {price}د
                         </span>
                       ))}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
+            
+            {filteredProducts.length === 0 && (
+              <div className="bg-[#111] p-20 rounded-3xl border border-white/5 text-center">
+                <LayoutGrid size={48} className="mx-auto text-[#F0E8D8]/10 mb-4" />
+                <p className="text-[#F0E8D8]/20">لم يتم العثور على منتجات تطابق بحثك</p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -601,8 +654,18 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <button className="w-full bg-[#C8973A] text-black font-black py-5 rounded-2xl shadow-xl hover:bg-[#E8C06A] transition-all">
-                  {editingProduct ? 'تحديث المنتج' : 'إضافة المنتج'}
+                <button 
+                  disabled={isSaving}
+                  className="w-full bg-[#C8973A] text-black font-black py-5 rounded-2xl shadow-xl hover:bg-[#E8C06A] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="animate-spin" size={20} />
+                      جاري الحفظ...
+                    </>
+                  ) : (
+                    editingProduct ? 'تحديث المنتج' : 'إضافة المنتج'
+                  )}
                 </button>
               </form>
             </motion.div>

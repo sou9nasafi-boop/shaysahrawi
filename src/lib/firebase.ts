@@ -51,6 +51,10 @@ export const getProducts = async (): Promise<Product[]> => {
 };
 
 export const addProduct = async (product: Omit<Product, 'id'>) => {
+  if (firebaseConfig.apiKey === "AIzaSy...") {
+    console.log("Simulating product add (Firebase not configured):", product);
+    return "mock-id-" + Math.random().toString(36).substr(2, 9);
+  }
   try {
     const docRef = await addDoc(collection(db, 'products'), {
       ...product,
@@ -64,6 +68,10 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
 };
 
 export const updateProduct = async (id: string, product: Partial<Product>) => {
+  if (firebaseConfig.apiKey === "AIzaSy...") {
+    console.log("Simulating product update (Firebase not configured):", id, product);
+    return;
+  }
   try {
     const docRef = doc(db, 'products', id);
     await updateDoc(docRef, {
@@ -77,6 +85,10 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
 };
 
 export const deleteProduct = async (id: string) => {
+  if (firebaseConfig.apiKey === "AIzaSy...") {
+    console.log("Simulating product delete (Firebase not configured):", id);
+    return;
+  }
   try {
     await deleteDoc(doc(db, 'products', id));
   } catch (e) {
