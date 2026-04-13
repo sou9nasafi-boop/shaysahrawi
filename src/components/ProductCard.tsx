@@ -29,14 +29,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       className="group relative flex flex-col h-full bg-[#111] border border-white/5 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-[#C8973A]/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/5] overflow-hidden m-2 rounded-[1.5rem]">
+      <div className="relative aspect-[4/5] overflow-hidden m-1.5 rounded-[1.8rem]">
         <div className="w-full h-full relative">
           <img 
             src={product.image} 
             alt={product.name} 
+            loading="lazy"
             className={cn(
-              "w-full h-full object-cover transition-all duration-1000 ease-out",
-              product.secondaryImage ? "group-hover:opacity-0 group-hover:scale-110" : "group-hover:scale-110"
+              "w-full h-full object-cover transition-all duration-700 ease-out",
+              product.secondaryImage ? "group-hover:opacity-0 group-hover:scale-105" : "group-hover:scale-105"
             )}
             referrerPolicy="no-referrer"
           />
@@ -44,7 +45,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             <img 
               src={product.secondaryImage} 
               alt={`${product.name} secondary`} 
-              className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-1000 ease-out scale-110 group-hover:scale-100"
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out scale-105 group-hover:scale-100"
               referrerPolicy="no-referrer"
             />
           )}
@@ -84,11 +86,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        <h3 className="text-xl font-serif font-bold text-[#F0E8D8] mb-3 group-hover:text-[#C8973A] transition-colors duration-300">
+        <h3 className="text-lg md:text-xl font-serif font-bold text-[#F0E8D8] mb-2 md:mb-3 group-hover:text-[#C8973A] transition-colors duration-300">
           {product.name}
         </h3>
         
-        <p className="text-sm text-[#F0E8D8]/50 line-clamp-2 mb-6 leading-relaxed font-light">
+        <p className="text-xs md:text-sm text-[#F0E8D8]/50 line-clamp-2 mb-4 md:mb-6 leading-relaxed font-light">
           {product.description}
         </p>
         

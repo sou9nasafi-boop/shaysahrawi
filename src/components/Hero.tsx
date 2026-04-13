@@ -38,11 +38,11 @@ export default function Hero() {
             تراث الأصالة في كل رشفة
           </motion.span>
           
-          <h1 className="text-5xl md:text-8xl font-serif font-bold text-[#F0E8D8] mb-8 leading-tight">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold text-[#F0E8D8] mb-8 leading-tight">
             عالم <span className="text-[#C8973A] italic">الشاي</span> الصحراوي
           </h1>
           
-          <p className="text-lg md:text-2xl text-[#F0E8D8]/80 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+          <p className="text-base sm:text-xl md:text-2xl text-[#F0E8D8]/80 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
             نقدم لكم أجود أنواع الشاي والمنتجات الصحراوية المختارة بعناية من قلب الصحراء المغربية، لتصلكم أينما كنتم.
           </p>
 
@@ -58,10 +58,10 @@ export default function Hero() {
             </motion.a>
             
             <motion.a 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               href={`https://wa.me/${CONTACT_INFO.whatsapp}`}
-              className="luxury-button bg-white/10 text-[#F0E8D8] backdrop-blur-md border border-white/20 w-full sm:w-auto flex items-center justify-center gap-3 hover:bg-white/20"
+              className="luxury-button bg-white/5 text-[#F0E8D8] border border-white/10 w-full sm:w-auto flex items-center justify-center gap-3 hover:bg-white/10"
             >
               <MessageCircle size={20} />
               <span>اطلب عبر واتساب</span>

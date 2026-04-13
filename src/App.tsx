@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Phone, MessageCircle, MapPin } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, ChevronRight, ChevronLeft } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
@@ -11,12 +11,26 @@ import { Category } from './types';
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category>('all');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === 'all') return PRODUCTS;
     return PRODUCTS.filter(p => p.category === activeCategory);
   }, [activeCategory]);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, clientWidth } = scrollContainerRef.current;
+      const scrollTo = direction === 'left' 
+        ? scrollLeft - clientWidth * 0.8 
+        : scrollLeft + clientWidth * 0.8;
+      
+      scrollContainerRef.current.scrollTo({
+        left: scrollTo,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F0E8D8] font-sans selection:bg-[#C8973A] selection:text-black overflow-x-hidden" dir="rtl">
@@ -26,35 +40,69 @@ export default function App() {
         <Hero />
 
         {/* Catalog Section */}
-        <section id="catalog" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <span className="text-[#C8973A] text-sm font-bold uppercase tracking-[0.3em] mb-4 block">مجموعتنا المختارة</span>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-[#F0E8D8] mb-6">كتالوج المنتجات</h2>
-            <p className="text-[#F0E8D8]/50 max-w-2xl mx-auto text-lg font-light leading-relaxed">
-              اختر ما يناسبك من مجموعتنا المختارة بعناية من أجود أنواع الشاي، العطور الفاخرة، والمنتجات الصحراوية الأصيلة.
-            </p>
-          </motion.div>
+        <section id="catalog" className="py-16 md:py-32 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 md:mb-16">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8"
+            >
+              <div className="text-right">
+                <span className="text-[#C8973A] text-xs md:text-sm font-bold uppercase tracking-[0.3em] mb-3 md:mb-4 block">مجموعتنا المختارة</span>
+                <h2 className="text-3xl md:text-6xl font-serif font-bold text-[#F0E8D8] mb-4">كتالوج المنتجات</h2>
+                <p className="text-[#F0E8D8]/50 max-w-xl text-base md:text-lg font-light leading-relaxed">
+                  تصفح مجموعتنا الفاخرة من أجود أنواع الشاي والمنتجات الصحراوية الأصيلة.
+                </p>
+              </div>
 
-          <CategoryFilter 
-            activeCategory={activeCategory} 
-            onCategoryChange={setActiveCategory} 
-          />
+              <div className="hidden md:flex gap-4">
+                <button 
+                  onClick={() => scroll('right')}
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/10 flex items-center justify-center text-[#F0E8D8] hover:bg-[#C8973A] hover:text-black hover:border-[#C8973A] transition-all duration-300"
+                >
+                  <ChevronRight size={20} />
+                </button>
+                <button 
+                  onClick={() => scroll('left')}
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/10 flex items-center justify-center text-[#F0E8D8] hover:bg-[#C8973A] hover:text-black hover:border-[#C8973A] transition-all duration-300"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              </div>
+            </motion.div>
+          </div>
 
-          <motion.div 
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 md:mb-12">
+            <CategoryFilter 
+              activeCategory={activeCategory} 
+              onCategoryChange={setActiveCategory} 
+            />
+          </div>
+
+          <div className="relative group">
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar scroll-smooth px-4 md:px-[calc((100vw-1280px)/2+32px)] pb-8 md:pb-12"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.map((product) => (
+                  <div 
+                    key={product.id} 
+                    className="flex-shrink-0 w-[260px] sm:w-[300px] md:w-[380px]"
+                    style={{ scrollSnapAlign: 'start' }}
+                  >
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Mobile Gradient Fade */}
+            <div className="absolute inset-y-0 right-0 w-8 md:w-12 bg-gradient-to-l from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+            <div className="absolute inset-y-0 left-0 w-8 md:w-12 bg-gradient-to-r from-[#0A0A0A] to-transparent pointer-events-none md:hidden" />
+          </div>
 
           {filteredProducts.length === 0 && (
             <motion.div 
@@ -69,14 +117,12 @@ export default function App() {
 
         {/* About Section */}
         <section id="about" className="py-24 md:py-40 bg-[#0A0A0A] overflow-hidden relative">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
               {/* Content side */}
               <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 className="order-2 lg:order-1"
               >
@@ -107,34 +153,32 @@ export default function App() {
 
               {/* Image side */}
               <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 className="relative order-1 lg:order-2"
               >
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.6)] border border-white/5">
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5">
                   <img 
                     src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800" 
                     alt="Desert Culture" 
+                    loading="lazy"
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 </div>
                 
                 {/* Floating Badge */}
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.5 }}
                   className="absolute -bottom-10 -right-10 bg-[#C8973A] text-black p-10 rounded-[2.5rem] shadow-2xl hidden md:block"
                 >
                   <div className="text-5xl font-serif font-bold mb-1">20+</div>
                   <div className="text-[10px] uppercase tracking-[0.2em] font-black opacity-70">سنة من الخبرة والأصالة</div>
                 </motion.div>
-
-                <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#C8973A]/10 rounded-full blur-[100px] animate-pulse" />
               </motion.div>
             </div>
           </div>
@@ -143,10 +187,12 @@ export default function App() {
         <section id="contact" className="py-24 md:py-32 bg-[#0A0A0A] relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-[#111] rounded-[3rem] p-8 md:p-20 border border-white/5 relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-[#C8973A]/5 rounded-full blur-[120px]" />
-              
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                >
                   <span className="text-[#C8973A] text-sm font-bold uppercase tracking-[0.3em] mb-6 block">تواصل معنا</span>
                   <h2 className="text-4xl md:text-6xl font-serif font-bold text-[#F0E8D8] mb-8 leading-tight">
                     نحن هنا <span className="text-[#C8973A] italic">لخدمتكم</span> دائماً
@@ -186,9 +232,14 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-inner">
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  className="bg-white/5 p-8 md:p-12 rounded-[2.5rem] border border-white/5 shadow-inner"
+                >
                   <h3 className="text-2xl font-serif font-bold text-[#F0E8D8] mb-8">أرسل لنا رسالة</h3>
                   <form className="space-y-6">
                     <div className="space-y-2">
@@ -205,7 +256,7 @@ export default function App() {
                     </div>
                     <button className="w-full luxury-button bg-[#C8973A] text-black font-black text-sm shadow-xl">إرسال الرسالة</button>
                   </form>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>

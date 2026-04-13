@@ -15,28 +15,27 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border-b border-white/5" />
+      <div className="absolute inset-0 bg-black/60 border-b border-white/5" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center h-20 md:h-24">
           {/* Logo */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex-shrink-0 flex items-center gap-4 group cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex-shrink-0 flex items-center gap-2 md:gap-4 group cursor-pointer"
           >
             <div className="relative">
               <img 
                 src={LOGO_URL} 
                 alt="الشاي الصحراوي الممتاز" 
-                className="h-12 md:h-14 w-auto transition-transform duration-500 group-hover:scale-110"
+                className="h-10 sm:h-12 md:h-14 w-auto transition-transform duration-500 group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-[#C8973A]/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[#C8973A] font-serif font-bold text-lg md:text-2xl tracking-tight">الشاي الصحراوي</span>
-              <span className="text-[#F0E8D8]/60 text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">الممتاز والأصيل</span>
+              <span className="text-[#C8973A] font-serif font-bold text-base sm:text-lg md:text-2xl tracking-tight">الشاي الصحراوي</span>
+              <span className="text-[#F0E8D8]/60 text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">الممتاز والأصيل</span>
             </div>
           </motion.div>
 
@@ -93,7 +92,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden absolute top-full left-0 right-0 bg-[#0A0A0A]/95 backdrop-blur-2xl border-b border-white/5 shadow-2xl"
+            className="md:hidden absolute top-full left-0 right-0 bg-[#0A0A0A] border-b border-white/5 shadow-2xl"
           >
             <div className="px-6 py-8 space-y-2">
               {navLinks.map((link, index) => (
