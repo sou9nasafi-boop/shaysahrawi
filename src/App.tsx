@@ -71,7 +71,13 @@ export default function App() {
       setContactForm({ name: '', phone: '', content: '', city: '' });
       setTimeout(() => setSendSuccess(false), 5000);
     } catch (error) {
-      alert('حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.');
+      // Fallback to WhatsApp if API fails
+      const message = `السلام عليكم، أنا ${contactForm.name} من مدينة ${contactForm.city}. رسالتي: ${contactForm.content}`;
+      const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
+      
+      if (window.confirm('عذراً، حدث مشكلة تقنية في الإرسال المباشر. هل تود إرسال رسالتك عبر واتساب بدلاً من ذلك؟')) {
+        window.open(whatsappUrl, '_blank');
+      }
     } finally {
       setIsSending(false);
     }

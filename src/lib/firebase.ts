@@ -55,39 +55,24 @@ export const deleteProduct = async (id: string) => {
 
 export const sendMessage = async (message: { name: string, phone: string, content: string, city?: string }) => {
   try {
-    let ip = 'unknown';
-    try {
-      // More compatible timeout pattern
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 2000);
-      
-      const ipRes = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
-      clearTimeout(id);
-      const ipData = await ipRes.json();
-      ip = ipData.ip || 'unknown';
-    } catch (ipErr) {
-      console.warn("IP fetch failed or timed out, using unknown", ipErr);
-    }
-
-    const res = await fetch(`${window.location.origin}${API_BASE}/messages`, {
+    const res = await fetch(`${API_BASE}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         ...message, 
-        ip, 
+        ip: 'pending', 
         userAgent: navigator.userAgent,
         status: 'new' 
       })
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Server responded with ${res.status}: ${errorText}`);
+      throw new Error(`Server responded with ${res.status}`);
     }
 
     return await res.json();
   } catch (e) {
-    console.error("Detailed error sending message:", e);
+    console.error("Error sending message:", e);
     throw e;
   }
 };

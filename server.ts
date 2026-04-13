@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
@@ -11,6 +12,7 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  app.use(cors());
   app.use(express.json());
 
   // Data persistence paths
@@ -55,13 +57,15 @@ async function startServer() {
   });
 
   app.post("/api/messages", async (req, res) => {
-    console.log("Received message request:", req.body);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    console.log("Received message request from IP:", ip, req.body);
     try {
       const data = await fs.readFile(MESSAGES_FILE, "utf-8");
       const messages = JSON.parse(data);
       const newMessage = {
         id: Date.now().toString(),
         ...req.body,
+        ip: ip, // Use server-side IP
         timestamp: new Date().toISOString()
       };
       messages.push(newMessage);
