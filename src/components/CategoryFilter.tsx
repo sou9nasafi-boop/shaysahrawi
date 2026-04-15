@@ -11,7 +11,6 @@ interface CategoryFilterProps {
 const categories: { id: Category; label: string }[] = [
   { id: 'all', label: 'الكل' },
   { id: 'tea', label: 'الشاي الصحراوي' },
-  { id: 'melhfa', label: 'ملاحف صحراوية' },
   { id: 'sahrawi', label: 'منتجات صحراوية' },
   { id: 'perfume', label: 'العطور الفاخرة' },
 ];

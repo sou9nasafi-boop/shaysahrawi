@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, Phone, X } from 'lucide-react';
 import { LOGO_URL, CONTACT_INFO } from '../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '../lib/cart';
+import { cn } from '../lib/utils';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const { totalItems, setIsCartOpen } = useCart();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'catalog', 'about', 'contact'];
+      const scrollPosition = window.scrollY + 100; // Offset for navbar
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+      
+      if (window.scrollY < 100) setActiveSection('home');
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { name: 'الرئيسية', href: '#home' },
@@ -42,20 +67,27 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-10">
-            {navLinks.map((link, index) => (
-              <motion.a 
-                key={link.name}
-                href={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="text-[#F0E8D8]/80 hover:text-[#C8973A] transition-all duration-300 font-medium text-sm lg:text-base relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C8973A] transition-all duration-300 group-hover:w-full" />
-              </motion.a>
-            ))}
+          <div className="hidden md:flex items-center gap-2 lg:gap-6">
+            {navLinks.map((link, index) => {
+              const isActive = activeSection === link.href.substring(1);
+              return (
+                <motion.a 
+                  key={link.name}
+                  href={link.href}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={cn(
+                    "transition-all duration-300 font-medium text-sm lg:text-base relative px-4 py-2 rounded-full",
+                    isActive 
+                      ? "text-black bg-[#C8973A] shadow-[0_0_15px_rgba(200,151,58,0.3)]" 
+                      : "text-[#F0E8D8]/80 hover:text-[#C8973A] hover:bg-white/5"
+                  )}
+                >
+                  {link.name}
+                </motion.a>
+              );
+            })}
           </div>
 
           {/* Actions */}

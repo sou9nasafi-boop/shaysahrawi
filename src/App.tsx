@@ -298,25 +298,52 @@ export default function App() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
               {/* Content side */}
               <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="order-2 lg:order-1"
               >
-                <span className="text-[#C8973A] text-sm font-bold uppercase tracking-[0.3em] mb-6 block">قصتنا وأصالتنا</span>
-                <h2 className="text-4xl md:text-6xl font-serif font-bold text-[#F0E8D8] mb-8 leading-tight">
+                <motion.span 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="text-[#C8973A] text-sm font-bold uppercase tracking-[0.3em] mb-6 block"
+                >
+                  قصتنا وأصالتنا
+                </motion.span>
+                <motion.h2 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="text-4xl md:text-6xl font-serif font-bold text-[#F0E8D8] mb-8 leading-tight"
+                >
                   نحمل إليكم <span className="text-[#C8973A] italic">روح الصحراء</span> في كل منتج
-                </h2>
-                <div className="space-y-6 text-lg text-[#F0E8D8]/60 font-light leading-relaxed">
+                </motion.h2>
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="space-y-6 text-lg text-[#F0E8D8]/60 font-light leading-relaxed"
+                >
                   <p>
                     بدأت رحلتنا من شغف عميق بالتراث الصحراوي المغربي، حيث يعتبر الشاي أكثر من مجرد مشروب؛ إنه رمز للكرم، الضيافة، واللحظات التي لا تنسى.
                   </p>
                   <p>
                     نحن في "الشاي الصحراوي الممتاز" نلتزم بتقديم أجود أنواع الشاي والمنتجات التقليدية التي تعكس أصالة الصحراء. كل منتج في متجرنا يتم اختياره بعناية فائقة لضمان أعلى مستويات الجودة والمذاق الأصيل.
                   </p>
-                </div>
+                </motion.div>
 
-                <div className="grid grid-cols-2 gap-10 mt-16">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="grid grid-cols-2 gap-10 mt-16"
+                >
                   <div className="flex flex-col gap-3">
                     <div className="text-4xl font-serif font-bold text-[#C8973A]">100%</div>
                     <div className="text-xs uppercase tracking-widest font-black text-[#F0E8D8]/40">منتجات طبيعية</div>
@@ -325,14 +352,15 @@ export default function App() {
                     <div className="text-4xl font-serif font-bold text-[#C8973A]">24/7</div>
                     <div className="text-xs uppercase tracking-widest font-black text-[#F0E8D8]/40">دعم متواصل</div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
 
               {/* Image side */}
               <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative order-1 lg:order-2"
               >
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5">

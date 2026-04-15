@@ -60,28 +60,29 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         </div>
         
         {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500" />
         
         {/* Quick Actions */}
-        <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500">
           <button 
             onClick={(e) => {
               e.stopPropagation();
               onQuickView?.(product);
             }}
-            className="bg-white text-black p-4 rounded-full hover:bg-[#C8973A] hover:text-black transition-colors shadow-2xl"
+            className="translate-y-8 group-hover:translate-y-0 transition-all duration-500 delay-75 flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full hover:bg-[#C8973A] shadow-2xl"
           >
-            <Eye size={20} />
+            <Eye size={16} />
+            <span className="text-xs font-bold">عرض سريع</span>
           </button>
           <button 
             onClick={(e) => {
               e.stopPropagation();
               addToCart(product, selectedWeight, currentPrice);
             }}
-            className="bg-[#C8973A] text-black p-4 rounded-full hover:bg-[#E8C06A] transition-colors shadow-2xl"
-            title="أضف للباك"
+            className="translate-y-8 group-hover:translate-y-0 transition-all duration-500 delay-100 flex items-center gap-2 bg-[#C8973A] text-black px-6 py-3 rounded-full hover:bg-[#E8C06A] shadow-2xl"
           >
-            <Plus size={20} />
+            <Plus size={16} />
+            <span className="text-xs font-bold">أضف للباك</span>
           </button>
         </div>
 
@@ -96,7 +97,6 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         <div className="flex justify-between items-center mb-3">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8973A] font-bold">
             {product.category === 'tea' ? 'شاي صحراوي' : 
-             product.category === 'melhfa' ? 'ملاحف صحراوية' : 
              product.category === 'perfume' ? 'عطور فاخرة' : 
              'منتجات صحراوية'}
           </span>

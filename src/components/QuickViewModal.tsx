@@ -88,7 +88,6 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-[#C8973A] text-xs font-bold uppercase tracking-[0.3em]">
                   {product.category === 'tea' ? 'شاي صحراوي' : 
-                   product.category === 'melhfa' ? 'ملاحف صحراوية' : 
                    product.category === 'perfume' ? 'عطور فاخرة' : 
                    'منتجات صحراوية'}
                 </span>

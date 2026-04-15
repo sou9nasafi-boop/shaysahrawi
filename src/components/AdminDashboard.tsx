@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
 import { supabase } from '../lib/supabase';
-import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone, Search, Filter, Loader2 } from 'lucide-react';
+import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone, Search, Filter, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Product, Category } from '../types';
 import { PRODUCTS as INITIAL_PRODUCTS } from '../constants';
 import { cn } from '../lib/utils';
@@ -20,6 +20,12 @@ export default function AdminDashboard() {
   // Product Search & Filter
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
+  
+  // Visits Search
+  const [visitSearchTerm, setVisitSearchTerm] = useState('');
+
+  // Messages Accordion
+  const [expandedMessageId, setExpandedMessageId] = useState<string | null>(null);
   
   // Product Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -359,8 +365,18 @@ export default function AdminDashboard() {
 
               {/* Visits Table */}
               <div className="bg-[#111] rounded-2xl border border-white/5 overflow-hidden">
-                <div className="p-6 border-b border-white/5">
+                <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <h3 className="text-xl font-serif font-bold text-[#F0E8D8]">نشاط الزوار</h3>
+                  <div className="relative w-full sm:w-64">
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-[#F0E8D8]/40" size={16} />
+                    <input 
+                      type="text"
+                      placeholder="بحث بالـ IP أو المتصفح..."
+                      value={visitSearchTerm}
+                      onChange={(e) => setVisitSearchTerm(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pr-10 pl-4 py-2 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 text-sm"
+                    />
+                  </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-right">
@@ -373,7 +389,13 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {visits.map((visit) => (
+                      {visits
+                        .filter(v => 
+                          v.ip.includes(visitSearchTerm) || 
+                          (v.userAgent && v.userAgent.toLowerCase().includes(visitSearchTerm.toLowerCase())) ||
+                          (v.path && v.path.toLowerCase().includes(visitSearchTerm.toLowerCase()))
+                        )
+                        .map((visit) => (
                         <tr key={visit.id} className="text-[#F0E8D8]/80 hover:bg-[#C8973A]/10 hover:text-white transition-all duration-300 cursor-default">
                           <td className="px-6 py-4 font-mono text-xs text-[#C8973A]">{visit.ip}</td>
                           <td className="px-6 py-4 text-xs truncate max-w-[150px]">{visit.userAgent}</td>
@@ -405,7 +427,9 @@ export default function AdminDashboard() {
                   <p className="text-[#F0E8D8]/20">لا توجد رسائل حالياً</p>
                 </div>
               ) : (
-                messages.map((message) => (
+                messages.map((message) => {
+                  const isExpanded = expandedMessageId === message.id;
+                  return (
                   <motion.div 
                     key={message.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -415,58 +439,79 @@ export default function AdminDashboard() {
                       message.status === 'new' ? "border-[#C8973A]/30 shadow-[0_0_20px_rgba(200,151,58,0.05)]" : "border-white/5 opacity-60 hover:opacity-100"
                     )}
                   >
-                    <div className="flex flex-col md:flex-row justify-between gap-6">
-                      <div className="flex-grow space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className={cn(
-                            "w-2 h-2 rounded-full",
-                            message.status === 'new' ? "bg-[#C8973A] animate-pulse" : "bg-white/20"
-                          )} />
-                          <h3 className="text-lg font-bold text-[#F0E8D8]">{message.name}</h3>
-                          <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-[#F0E8D8]/40 uppercase tracking-widest">
-                            {message.city || 'مدينة غير معروفة'}
-                          </span>
-                        </div>
-                        <p className="text-[#F0E8D8]/70 leading-relaxed font-light">
-                          {message.content}
-                        </p>
-                        <div className="flex flex-wrap gap-4 text-xs text-[#F0E8D8]/30">
-                          <div className="flex items-center gap-2">
-                            <Phone size={12} />
-                            {message.phone}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <MousePointer2 size={12} />
-                            {message.ip}
-                          </div>
-                          <div className="opacity-50">
-                            {new Date(message.created_at).toLocaleString('ar-MA')}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex md:flex-col justify-end gap-2">
+                    <div 
+                      className="flex flex-col md:flex-row justify-between gap-4 cursor-pointer"
+                      onClick={() => setExpandedMessageId(isExpanded ? null : message.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "w-2 h-2 rounded-full",
+                          message.status === 'new' ? "bg-[#C8973A] animate-pulse" : "bg-white/20"
+                        )} />
+                        <h3 className="text-lg font-bold text-[#F0E8D8]">{message.name}</h3>
+                        <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded text-[#F0E8D8]/40 uppercase tracking-widest">
+                          {message.city || 'مدينة غير معروفة'}
+                        </span>
                         {message.status === 'new' && (
-                          <button 
-                            onClick={() => updateMessageStatus(message.id, 'read')}
-                            className="bg-[#C8973A]/10 text-[#C8973A] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#C8973A] hover:text-black transition-all flex items-center gap-2"
-                          >
-                            <CheckCircle2 size={14} />
-                            تحديد كمقروء
-                          </button>
+                          <span className="text-[10px] bg-[#C8973A]/20 text-[#C8973A] px-2 py-0.5 rounded font-bold">جديدة</span>
                         )}
-                        <a 
-                          href={`https://wa.me/${message.phone.replace(/\s/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="bg-green-500/10 text-green-500 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-500 hover:text-white transition-all flex items-center gap-2"
-                        >
-                          <ShoppingBag size={14} />
-                          رد عبر واتساب
-                        </a>
+                      </div>
+                      <div className="text-xs text-[#F0E8D8]/40 flex items-center gap-2">
+                        {new Date(message.created_at).toLocaleString('ar-MA')}
+                        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </div>
                     </div>
+                    
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div 
+                          initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                          animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                          exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                          className="overflow-hidden border-t border-white/5 pt-4"
+                        >
+                          <p className="text-[#F0E8D8]/70 leading-relaxed font-light mb-4">
+                            {message.content}
+                          </p>
+                          <div className="flex flex-wrap gap-4 text-xs text-[#F0E8D8]/40 bg-black/20 p-4 rounded-xl">
+                            <div className="flex items-center gap-2">
+                              <Phone size={14} className="text-[#C8973A]" />
+                              <span dir="ltr">{message.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MousePointer2 size={14} className="text-[#C8973A]" />
+                              <span dir="ltr">{message.ip}</span>
+                            </div>
+                          </div>
+                          <div className="mt-4 flex justify-end gap-2">
+                            {message.status === 'new' && (
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateMessageStatus(message.id, 'read');
+                                }}
+                                className="bg-[#C8973A]/10 text-[#C8973A] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#C8973A] hover:text-black transition-all flex items-center gap-2"
+                              >
+                                <CheckCircle2 size={14} />
+                                تحديد كمقروء
+                              </button>
+                            )}
+                            <a 
+                              href={`https://wa.me/${message.phone.replace(/\s/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="bg-green-500/10 text-green-500 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-500 hover:text-black transition-all flex items-center gap-2"
+                            >
+                              <Phone size={14} />
+                              رد عبر واتساب
+                            </a>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
-                ))
+                )})
               )}
             </div>
           </div>
@@ -492,7 +537,6 @@ export default function AdminDashboard() {
                 >
                   <option value="all">كل التصنيفات</option>
                   <option value="tea">شاي</option>
-                  <option value="melhfa">ملاحف</option>
                   <option value="perfume">عطور</option>
                   <option value="sahrawi">منتجات صحراوية</option>
                 </select>
@@ -539,7 +583,7 @@ export default function AdminDashboard() {
                   <div className="p-5">
                     <div className="flex justify-between items-start mb-2">
                       <div className="text-[10px] text-[#C8973A] font-bold uppercase tracking-widest">
-                        {product.category === 'tea' ? 'شاي' : product.category === 'melhfa' ? 'ملاحف' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
+                        {product.category === 'tea' ? 'شاي' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
                       </div>
                       <div className="text-[10px] text-[#F0E8D8]/20 font-mono">#{product.id.slice(-4)}</div>
                     </div>
@@ -611,7 +655,6 @@ export default function AdminDashboard() {
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50"
                     >
                       <option value="tea">شاي</option>
-                      <option value="melhfa">ملاحف</option>
                       <option value="perfume">عطور</option>
                       <option value="sahrawi">منتجات صحراوية</option>
                     </select>
