@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { ShoppingCart, Menu, Phone, X } from 'lucide-react';
 import { LOGO_URL, CONTACT_INFO } from '../constants';
 import { motion, AnimatePresence } from 'motion/react';
+import { useCart } from '../lib/cart';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { totalItems, setIsCartOpen } = useCart();
 
   const navLinks = [
     { name: 'الرئيسية', href: '#home' },
@@ -62,16 +64,23 @@ export default function Navbar() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               href={`tel:${CONTACT_INFO.phone}`}
-              className="hidden lg:flex items-center gap-3 bg-[#C8973A] text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-[#E8C06A] hover:shadow-[0_0_20px_rgba(200,151,58,0.4)] transition-all duration-300"
+              className="flex items-center justify-center lg:gap-3 bg-[#C8973A] text-black w-10 h-10 lg:w-auto lg:h-auto lg:px-6 lg:py-2.5 rounded-full font-bold text-sm hover:bg-[#E8C06A] hover:shadow-[0_0_20px_rgba(200,151,58,0.4)] transition-all duration-300"
             >
               <Phone size={16} />
-              <span dir="ltr" className="inline-block">{CONTACT_INFO.phone}</span>
+              <span dir="ltr" className="hidden lg:inline-block">{CONTACT_INFO.phone}</span>
             </motion.a>
             
             <div className="flex items-center gap-2">
-              <button className="p-2.5 text-[#F0E8D8]/80 hover:text-[#C8973A] hover:bg-white/5 rounded-full transition-all duration-300 relative group">
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="p-2.5 text-[#F0E8D8]/80 hover:text-[#C8973A] hover:bg-white/5 rounded-full transition-all duration-300 relative group"
+              >
                 <ShoppingCart size={22} />
-                <span className="absolute top-1 right-1 bg-[#C8973A] text-black text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">0</span>
+                {totalItems > 0 && (
+                  <span className="absolute top-1 right-1 bg-[#C8973A] text-black text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    {totalItems}
+                  </span>
+                )}
               </button>
               
               <button 
