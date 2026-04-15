@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ShoppingBag, Star, Info } from 'lucide-react';
+import { X, ShoppingBag, Star, Info, Plus } from 'lucide-react';
 import { Product } from '../types';
 import { CONTACT_INFO } from '../constants';
 import { cn } from '../lib/utils';
 import { trackOrderClick } from '../lib/firebase';
+import { useCart } from '../lib/cart';
 
 interface QuickViewModalProps {
   product: Product | null;
@@ -20,6 +21,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
   
   const allImages = [product.image, product.secondaryImage, ...(product.gallery || [])].filter(Boolean) as string[];
   const [selectedImage, setSelectedImage] = React.useState(allImages[0]);
+  const { addToCart } = useCart();
 
   const handleWhatsAppOrder = () => {
     trackOrderClick(product, selectedWeight, currentPrice);
@@ -145,13 +147,25 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
                   </div>
                 </div>
 
-                <button 
-                  onClick={handleWhatsAppOrder}
-                  className="w-full sm:w-auto luxury-button bg-[#C8973A] text-black flex items-center justify-center gap-4 shadow-2xl"
-                >
-                  <ShoppingBag size={22} />
-                  <span>اطلب الآن عبر واتساب</span>
-                </button>
+                <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
+                  <button 
+                    onClick={() => {
+                      addToCart(product, selectedWeight, currentPrice);
+                      onClose();
+                    }}
+                    className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 text-[#F0E8D8] font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all duration-300"
+                  >
+                    <Plus size={20} />
+                    <span>أضف للباك</span>
+                  </button>
+                  <button 
+                    onClick={handleWhatsAppOrder}
+                    className="w-full sm:w-auto luxury-button bg-[#C8973A] text-black flex items-center justify-center gap-4 shadow-2xl"
+                  >
+                    <ShoppingBag size={20} />
+                    <span>اطلب الآن</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

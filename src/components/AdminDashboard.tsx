@@ -165,6 +165,29 @@ export default function AdminDashboard() {
     });
   };
 
+  const addFeature = () => {
+    setFormData(prev => ({
+      ...prev,
+      features: [...(prev.features || []), '']
+    }));
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    setFormData(prev => {
+      const newFeatures = [...(prev.features || [])];
+      newFeatures[index] = value;
+      return { ...prev, features: newFeatures };
+    });
+  };
+
+  const removeFeature = (index: number) => {
+    setFormData(prev => {
+      const newFeatures = [...(prev.features || [])];
+      newFeatures.splice(index, 1);
+      return { ...prev, features: newFeatures };
+    });
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     window.location.hash = '';
@@ -320,7 +343,7 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {orders.map((order) => (
-                        <tr key={order.id} className="text-[#F0E8D8]/80 hover:bg-white/5 transition-colors">
+                        <tr key={order.id} className="text-[#F0E8D8]/80 hover:bg-[#C8973A]/10 hover:text-white transition-all duration-300 cursor-default">
                           <td className="px-6 py-4 font-bold">{order.productName}</td>
                           <td className="px-6 py-4">{order.weight}</td>
                           <td className="px-6 py-4 text-[#C8973A]">{order.price} درهم</td>
@@ -351,7 +374,7 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {visits.map((visit) => (
-                        <tr key={visit.id} className="text-[#F0E8D8]/80 hover:bg-white/5 transition-colors">
+                        <tr key={visit.id} className="text-[#F0E8D8]/80 hover:bg-[#C8973A]/10 hover:text-white transition-all duration-300 cursor-default">
                           <td className="px-6 py-4 font-mono text-xs text-[#C8973A]">{visit.ip}</td>
                           <td className="px-6 py-4 text-xs truncate max-w-[150px]">{visit.userAgent}</td>
                           <td className="px-6 py-4">{visit.path}</td>
@@ -388,8 +411,8 @@ export default function AdminDashboard() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={cn(
-                      "bg-[#111] p-6 rounded-2xl border transition-all duration-300",
-                      message.status === 'new' ? "border-[#C8973A]/30 shadow-[0_0_20px_rgba(200,151,58,0.05)]" : "border-white/5 opacity-60"
+                      "bg-[#111] p-6 rounded-2xl border transition-all duration-300 hover:bg-white/5 hover:border-[#C8973A]/50 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]",
+                      message.status === 'new' ? "border-[#C8973A]/30 shadow-[0_0_20px_rgba(200,151,58,0.05)]" : "border-white/5 opacity-60 hover:opacity-100"
                     )}
                   >
                     <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -668,6 +691,37 @@ export default function AdminDashboard() {
                     dir="ltr"
                     placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
                   />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-bold text-[#F0E8D8]/40 uppercase tracking-widest">المميزات (Features)</label>
+                    <button type="button" onClick={addFeature} className="text-[#C8973A] text-xs font-bold hover:underline flex items-center gap-1">
+                      <Plus size={14} />
+                      إضافة ميزة
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {(formData.features || []).map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <input 
+                          type="text" 
+                          value={feature}
+                          onChange={(e) => updateFeature(index, e.target.value)}
+                          className="flex-grow bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 text-sm"
+                          placeholder="مثال: طبيعي 100%"
+                        />
+                        <button type="button" onClick={() => removeFeature(index)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500/20 transition-colors">
+                          <X size={18} />
+                        </button>
+                      </div>
+                    ))}
+                    {(!formData.features || formData.features.length === 0) && (
+                      <div className="text-center py-4 text-xs text-[#F0E8D8]/40 border border-dashed border-white/10 rounded-xl">
+                        لا توجد مميزات مضافة. اضغط على "إضافة ميزة" للبدء.
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <button 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ShoppingBag, Eye, Star } from 'lucide-react';
+import { ShoppingBag, Eye, Star, Plus } from 'lucide-react';
 import { Product } from '../types';
 import { CONTACT_INFO } from '../constants';
 import { cn } from '../lib/utils';
+import { useCart } from '../lib/cart';
 
 import { trackOrderClick } from '../lib/firebase';
 
@@ -16,7 +17,9 @@ interface ProductCardProps {
 export default function ProductCard({ product, onQuickView }: ProductCardProps) {
   const weightOptions = Object.keys(product.prices);
   const [selectedWeight, setSelectedWeight] = useState(weightOptions[0]);
+  const [isExpanded, setIsExpanded] = useState(false);
   const currentPrice = product.prices[selectedWeight];
+  const { addToCart } = useCart();
 
   const handleWhatsAppOrder = () => {
     trackOrderClick(product, selectedWeight, currentPrice);
@@ -71,10 +74,14 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
             <Eye size={20} />
           </button>
           <button 
-            onClick={handleWhatsAppOrder}
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product, selectedWeight, currentPrice);
+            }}
             className="bg-[#C8973A] text-black p-4 rounded-full hover:bg-[#E8C06A] transition-colors shadow-2xl"
+            title="أضف للباك"
           >
-            <ShoppingBag size={20} />
+            <Plus size={20} />
           </button>
         </div>
 
@@ -103,9 +110,25 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           {product.name}
         </h3>
         
-        <p className="text-xs md:text-sm text-[#F0E8D8]/50 line-clamp-2 mb-4 md:mb-6 leading-relaxed font-light">
-          {product.description}
-        </p>
+        <div className="mb-4 md:mb-6">
+          <p 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={cn(
+              "text-xs md:text-sm text-[#F0E8D8]/50 leading-relaxed font-light cursor-pointer transition-all duration-300",
+              !isExpanded && "line-clamp-2"
+            )}
+          >
+            {product.description}
+          </p>
+          {product.description && product.description.length > 60 && (
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-[10px] text-[#C8973A] mt-1 hover:underline font-bold"
+            >
+              {isExpanded ? 'عرض أقل' : 'اقرأ المزيد'}
+            </button>
+          )}
+        </div>
         
         {/* Weight Selection */}
         {weightOptions.length > 1 && (
@@ -140,13 +163,22 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           </div>
         )}
 
-        <button 
-          onClick={handleWhatsAppOrder}
-          className="w-full mt-auto bg-[#C8973A] text-black py-4 rounded-2xl font-black text-sm hover:bg-[#E8C06A] transition-all duration-300 flex items-center justify-center gap-3 shadow-lg active:scale-[0.98]"
-        >
-          <ShoppingBag size={18} />
-          <span>اطلب الآن عبر واتساب</span>
-        </button>
+        <div className="mt-auto grid grid-cols-2 gap-2">
+          <button 
+            onClick={handleWhatsAppOrder}
+            className="bg-white/10 text-[#F0E8D8] py-3 rounded-xl font-bold text-xs hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <ShoppingBag size={16} />
+            <span>طلب مباشر</span>
+          </button>
+          <button 
+            onClick={() => addToCart(product, selectedWeight, currentPrice)}
+            className="bg-[#C8973A] text-black py-3 rounded-xl font-bold text-xs hover:bg-[#E8C06A] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
+          >
+            <Plus size={16} />
+            <span>أضف للباك</span>
+          </button>
+        </div>
       </div>
     </motion.div>
   );
