@@ -1,0 +1,26 @@
+[
+  {
+    "id": "melhfa-combined-1",
+    "name": "ملحف صحراوي فاخر",
+    "category": "melhfa",
+    "prices": {
+      "قطعة واحدة": 200
+    },
+    "description": "ملحف صحراوي أصيل بألوان زاهية وتصميم تقليدي يعكس ثقافة الصحراء. قماش بارد ومريح يناسب جميع الأوقات.",
+    "image": "https://i.ibb.co/gFVFtNh1/pomelli-photoshoot-image-1-1-0414-1.jpg",
+    "secondaryImage": "https://i.ibb.co/r2jR4m9J/pomelli-photoshoot-image-1-1-0414.jpg",
+    "gallery": [
+      "https://i.ibb.co/jkVjr7vb/Melhfa-fabric-on-202604142039.jpg",
+      "https://i.ibb.co/23FsJC3P/Sahrawi-melhfa-fabric-202604142039.jpg",
+      "https://i.ibb.co/0VQB5J27/Moroccan-woman-wearing-202604142039.jpg",
+      "https://i.ibb.co/RkmTt8q8/Woman-drinking-tea-202604142039.jpg"
+    ],
+    "features": [
+      "قماش بارد ومريح",
+      "ألوان ثابتة",
+      "طول قياسي 4.5 متر",
+      "جودة عالية"
+    ],
+    "createdAt": "2026-04-14T21:09:54.178Z"
+  }
+]

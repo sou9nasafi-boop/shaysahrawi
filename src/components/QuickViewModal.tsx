@@ -17,6 +17,9 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
   const weightOptions = Object.keys(product.prices);
   const [selectedWeight, setSelectedWeight] = React.useState(weightOptions[0]);
   const currentPrice = product.prices[selectedWeight];
+  
+  const allImages = [product.image, product.secondaryImage, ...(product.gallery || [])].filter(Boolean) as string[];
+  const [selectedImage, setSelectedImage] = React.useState(allImages[0]);
 
   const handleWhatsAppOrder = () => {
     trackOrderClick(product, selectedWeight, currentPrice);
@@ -49,14 +52,33 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
 
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Image Section */}
-            <div className="relative aspect-square lg:aspect-auto h-full overflow-hidden bg-white/5">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="relative aspect-square lg:aspect-auto h-full overflow-hidden bg-white/5 flex flex-col">
+              <div className="flex-1 relative">
+                <img 
+                  src={selectedImage} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover transition-all duration-300"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
+              
+              {allImages.length > 1 && (
+                <div className="flex gap-3 p-4 overflow-x-auto bg-black/40 backdrop-blur-md no-scrollbar absolute bottom-0 left-0 right-0">
+                  {allImages.map((img, idx) => (
+                    <button 
+                      key={idx} 
+                      onClick={() => setSelectedImage(img)} 
+                      className={cn(
+                        "w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-300",
+                        selectedImage === img ? "border-[#C8973A] scale-105" : "border-transparent opacity-50 hover:opacity-100"
+                      )}
+                    >
+                      <img src={img} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Content Section */}
@@ -64,6 +86,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-[#C8973A] text-xs font-bold uppercase tracking-[0.3em]">
                   {product.category === 'tea' ? 'شاي صحراوي' : 
+                   product.category === 'melhfa' ? 'ملاحف صحراوية' : 
                    product.category === 'perfume' ? 'عطور فاخرة' : 
                    'منتجات صحراوية'}
                 </span>

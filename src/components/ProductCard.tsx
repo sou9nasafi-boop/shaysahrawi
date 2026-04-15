@@ -89,6 +89,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         <div className="flex justify-between items-center mb-3">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#C8973A] font-bold">
             {product.category === 'tea' ? 'شاي صحراوي' : 
+             product.category === 'melhfa' ? 'ملاحف صحراوية' : 
              product.category === 'perfume' ? 'عطور فاخرة' : 
              'منتجات صحراوية'}
           </span>

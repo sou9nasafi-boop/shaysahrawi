@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getProducts, addProduct, updateProduct, deleteProduct, updateMessageStatus } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 import { Users, ShoppingBag, MousePointer2, ShieldCheck, Plus, Pencil, Trash2, X, Image as ImageIcon, LayoutGrid, BarChart3, Mail, CheckCircle2, Phone, Search, Filter, Loader2 } from 'lucide-react';
 import { Product, Category } from '../types';
 import { PRODUCTS as INITIAL_PRODUCTS } from '../constants';
@@ -31,6 +32,7 @@ export default function AdminDashboard() {
     description: '',
     image: '',
     secondaryImage: '',
+    gallery: [],
     features: []
   });
 
@@ -54,19 +56,22 @@ export default function AdminDashboard() {
       const fetchData = async () => {
         try {
           const [vRes, cRes, pRes, mRes] = await Promise.all([
-            fetch('/api/stats/visits').then(r => r.json()),
-            fetch('/api/stats/clicks').then(r => r.json()),
-            fetch('/api/products').then(r => r.json()),
-            fetch('/api/messages').then(r => r.json())
+            supabase.from('visits').select('*').order('created_at', { ascending: false }).limit(500),
+            supabase.from('clicks').select('*').order('created_at', { ascending: false }).limit(500),
+            supabase.from('products').select('*').order('created_at', { ascending: false }),
+            supabase.from('messages').select('*').order('created_at', { ascending: false })
           ]);
 
-          setVisits(vRes.reverse());
-          setOrders(cRes.reverse());
+          setVisits(vRes.data || []);
+          setOrders(cRes.data || []);
           
-          const fetchedProducts = pRes;
+          const fetchedProducts = (pRes.data || []).map(p => ({
+            ...p,
+            secondaryImage: p.secondaryimage
+          })) as Product[];
           setProducts(fetchedProducts.length > 0 ? fetchedProducts : INITIAL_PRODUCTS);
           
-          setMessages(mRes.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+          setMessages(mRes.data || []);
         } catch (e) {
           console.error("Error polling data:", e);
         }
@@ -97,6 +102,7 @@ export default function AdminDashboard() {
         description: '',
         image: '',
         secondaryImage: '',
+        gallery: [],
         features: []
       });
     } catch (error) {
@@ -125,6 +131,7 @@ export default function AdminDashboard() {
       description: product.description,
       image: product.image,
       secondaryImage: product.secondaryImage || '',
+      gallery: product.gallery || [],
       features: product.features || []
     });
     setIsModalOpen(true);
@@ -318,7 +325,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4">{order.weight}</td>
                           <td className="px-6 py-4 text-[#C8973A]">{order.price} درهم</td>
                           <td className="px-6 py-4 text-xs opacity-50">
-                            {new Date(order.timestamp).toLocaleString('ar-MA')}
+                            {new Date(order.created_at).toLocaleString('ar-MA')}
                           </td>
                         </tr>
                       ))}
@@ -349,7 +356,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 text-xs truncate max-w-[150px]">{visit.userAgent}</td>
                           <td className="px-6 py-4">{visit.path}</td>
                           <td className="px-6 py-4 text-xs opacity-50">
-                            {new Date(visit.timestamp).toLocaleString('ar-MA')}
+                            {new Date(visit.created_at).toLocaleString('ar-MA')}
                           </td>
                         </tr>
                       ))}
@@ -410,7 +417,7 @@ export default function AdminDashboard() {
                             {message.ip}
                           </div>
                           <div className="opacity-50">
-                            {new Date(message.timestamp).toLocaleString('ar-MA')}
+                            {new Date(message.created_at).toLocaleString('ar-MA')}
                           </div>
                         </div>
                       </div>
@@ -462,6 +469,7 @@ export default function AdminDashboard() {
                 >
                   <option value="all">كل التصنيفات</option>
                   <option value="tea">شاي</option>
+                  <option value="melhfa">ملاحف</option>
                   <option value="perfume">عطور</option>
                   <option value="sahrawi">منتجات صحراوية</option>
                 </select>
@@ -508,7 +516,7 @@ export default function AdminDashboard() {
                   <div className="p-5">
                     <div className="flex justify-between items-start mb-2">
                       <div className="text-[10px] text-[#C8973A] font-bold uppercase tracking-widest">
-                        {product.category === 'tea' ? 'شاي' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
+                        {product.category === 'tea' ? 'شاي' : product.category === 'melhfa' ? 'ملاحف' : product.category === 'perfume' ? 'عطور' : 'صحراوي'}
                       </div>
                       <div className="text-[10px] text-[#F0E8D8]/20 font-mono">#{product.id.slice(-4)}</div>
                     </div>
@@ -580,6 +588,7 @@ export default function AdminDashboard() {
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50"
                     >
                       <option value="tea">شاي</option>
+                      <option value="melhfa">ملاحف</option>
                       <option value="perfume">عطور</option>
                       <option value="sahrawi">منتجات صحراوية</option>
                     </select>
@@ -647,6 +656,18 @@ export default function AdminDashboard() {
                       <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-[#F0E8D8]/20" size={16} />
                     </div>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-[#F0E8D8]/40 uppercase tracking-widest">صور إضافية (المعرض - رابط في كل سطر)</label>
+                  <textarea 
+                    rows={3}
+                    value={formData.gallery?.join('\n') || ''}
+                    onChange={(e) => setFormData({...formData, gallery: e.target.value.split('\n').map(s => s.trim()).filter(Boolean)})}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[#F0E8D8] focus:outline-none focus:border-[#C8973A]/50 text-xs text-left"
+                    dir="ltr"
+                    placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                  />
                 </div>
 
                 <button 
