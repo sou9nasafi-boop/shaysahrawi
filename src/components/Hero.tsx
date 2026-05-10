@@ -15,7 +15,9 @@ export default function Hero() {
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#0A0A0A] z-10" />
         <img 
-          src="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=80&w=1200" 
+          src="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=60&w=1200" 
+          srcSet="https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=60&w=800 800w, https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=60&w=1200 1200w, https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&q=60&w=2000 2000w"
+          sizes="100vw"
           alt="Desert Background" 
           className="w-full h-full object-cover"
           decoding="async"

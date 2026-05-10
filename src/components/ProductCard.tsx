@@ -39,7 +39,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
       <div className="relative aspect-[4/5] overflow-hidden m-1.5 rounded-[1.8rem] img-skeleton">
         <div className="w-full h-full relative">
           <img 
-            src={product.image.includes('unsplash.com') ? `${product.image}&w=600` : product.image} 
+            src={product.image.includes('unsplash.com') ? `${product.image}&w=400&q=60` : product.image} 
             alt={product.name} 
             loading="lazy"
             decoding="async"
@@ -51,7 +51,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           />
           {product.secondaryImage && (
             <img 
-              src={product.secondaryImage.includes('unsplash.com') ? `${product.secondaryImage}&w=600` : product.secondaryImage} 
+              src={product.secondaryImage.includes('unsplash.com') ? `${product.secondaryImage}&w=400&q=60` : product.secondaryImage} 
               alt={`${product.name} secondary`} 
               loading="lazy"
               decoding="async"
