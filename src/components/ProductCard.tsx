@@ -36,12 +36,13 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
       className="group relative flex flex-col h-full bg-[#111] border border-white/5 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-[#C8973A]/30 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/5] overflow-hidden m-1.5 rounded-[1.8rem]">
+      <div className="relative aspect-[4/5] overflow-hidden m-1.5 rounded-[1.8rem] img-skeleton">
         <div className="w-full h-full relative">
           <img 
-            src={product.image} 
+            src={product.image.includes('unsplash.com') ? `${product.image}&w=600` : product.image} 
             alt={product.name} 
             loading="lazy"
+            decoding="async"
             className={cn(
               "w-full h-full object-cover transition-all duration-700 ease-out",
               product.secondaryImage ? "group-hover:opacity-0 group-hover:scale-105" : "group-hover:scale-105"
@@ -50,9 +51,10 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           />
           {product.secondaryImage && (
             <img 
-              src={product.secondaryImage} 
+              src={product.secondaryImage.includes('unsplash.com') ? `${product.secondaryImage}&w=600` : product.secondaryImage} 
               alt={`${product.name} secondary`} 
               loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out scale-105 group-hover:scale-100"
               referrerPolicy="no-referrer"
             />

@@ -11,3 +11,13 @@ export interface Product {
 }
 
 export type Category = 'all' | 'tea' | 'perfume' | 'sahrawi';
+
+export interface Message {
+  id: string;
+  name: string;
+  phone: string;
+  content: string;
+  city?: string;
+  status: 'new' | 'read' | 'replied';
+  created_at: string;
+}

@@ -569,8 +569,14 @@ export default function AdminDashboard() {
                   key={product.id} 
                   className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden group hover:border-[#C8973A]/30 transition-all duration-500"
                 >
-                  <div className="aspect-square relative overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                  <div className="aspect-square relative overflow-hidden bg-white/5 img-skeleton">
+                    <img 
+                      src={product.image.includes('unsplash.com') ? `${product.image}&w=300` : product.image} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      decoding="async"
+                      referrerPolicy="no-referrer" 
+                    />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                       <button onClick={() => openEditModal(product)} className="bg-white text-black p-3 rounded-full hover:bg-[#C8973A] transition-colors shadow-lg">
                         <Pencil size={18} />

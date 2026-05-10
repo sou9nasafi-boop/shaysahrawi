@@ -54,11 +54,12 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
 
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Image Section */}
-            <div className="relative aspect-square lg:aspect-auto h-full overflow-hidden bg-white/5 flex flex-col">
+            <div className="relative aspect-square lg:aspect-auto h-full overflow-hidden bg-white/5 flex flex-col img-skeleton">
               <div className="flex-1 relative">
                 <img 
-                  src={selectedImage} 
+                  src={selectedImage.includes('unsplash.com') ? `${selectedImage}&w=800` : selectedImage} 
                   alt={product.name} 
+                  decoding="async"
                   className="w-full h-full object-cover transition-all duration-300"
                   referrerPolicy="no-referrer"
                 />
@@ -72,11 +73,16 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
                       key={idx} 
                       onClick={() => setSelectedImage(img)} 
                       className={cn(
-                        "w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-300",
+                        "w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-300 img-skeleton",
                         selectedImage === img ? "border-[#C8973A] scale-105" : "border-transparent opacity-50 hover:opacity-100"
                       )}
                     >
-                      <img src={img} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      <img 
+                        src={img.includes('unsplash.com') ? `${img}&w=150` : img} 
+                        className="w-full h-full object-cover" 
+                        decoding="async"
+                        referrerPolicy="no-referrer" 
+                      />
                     </button>
                   ))}
                 </div>

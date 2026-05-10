@@ -363,11 +363,12 @@ export default function App() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative order-1 lg:order-2"
               >
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5">
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border border-white/5 img-skeleton">
                   <img 
-                    src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800" 
+                    src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=600" 
                     alt="Desert Culture" 
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
